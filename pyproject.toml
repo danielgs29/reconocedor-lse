@@ -5,6 +5,7 @@ requires-python = ">=3.11"
 dependencies = [
     "jupyterlab>=4.6.1",
     "matplotlib>=3.11.0",
+    "mediapipe==0.10.14",
     "numpy>=2.4.6",
     "pandas>=3.0.3",
     "scikit-learn>=1.9.0",
