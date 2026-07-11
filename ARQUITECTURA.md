@@ -1,15 +1,13 @@
-# Arquitectura y justificación de decisiones
+# Arquitectura y justificación de las decisiones
 
-Reconocedor de Lengua de Signos Española (LSE) · Proyecto final del máster de IA
+Reconocedor de Lengua de Signos Española. Proyecto final del máster de IA.
 
-Este documento registra las decisiones arquitectónicas del proyecto en formato ADR
-(*Architecture Decision Record*): para cada decisión se indica **qué se decidió**, **qué
-alternativas se consideraron**, **por qué** y **qué coste/limitación** asume. El objetivo
-es que cada elección técnica sea defendible y trazable.
+Este documento explica cómo está montado el proyecto y por qué se ha decidido así. Para
+cada decisión importante se indica qué se eligió, qué otras opciones había, por qué se
+tomó esa opción y qué limitación se asume a cambio. El objetivo es que cualquier persona
+que lea el proyecto entienda el motivo de cada elección.
 
----
-
-## Diagrama 1 — Arquitectura de inferencia (tiempo de ejecución)
+## Diagrama 1. Recorrido de la información cuando la aplicación está en uso
 
 ```mermaid
 flowchart TD
@@ -29,13 +27,14 @@ flowchart TD
     style B fill:#E8F0FE
 ```
 
-**Lectura del diagrama:** todo ocurre en el dispositivo del usuario. No hay servidor de
-inferencia. El mismo modelo alimenta las dos funciones; solo cambia qué se hace con la
-predicción.
+Lectura del diagrama. Todo ocurre en el dispositivo de la persona. No hay ningún servidor
+que reciba la imagen. El mismo modelo alimenta las dos funciones y solo cambia qué se hace
+con el resultado.
 
----
+## Diagrama 2. Proceso de entrenamiento del modelo
 
-## Diagrama 2 — Pipeline de entrenamiento (offline, reproducible)
+Este proceso se hace una sola vez, antes de publicar la aplicación, y se puede repetir
+cuando haga falta mejorar el modelo.
 
 ```mermaid
 flowchart LR
@@ -53,229 +52,216 @@ flowchart LR
     style I fill:#36B37E,color:#fff
 ```
 
-**Lectura del diagrama:** el split por signante (naranja) es anterior a todo lo demás,
-para garantizar que ningún signante aparece en dos particiones. El modelo congelado
-(verde) es el único artefacto que pasa a producción.
+Lectura del diagrama. La separación de los datos por persona, marcada en naranja, se hace
+antes que cualquier otra cosa, para asegurar que ninguna persona aparece en dos grupos. El
+modelo ya fijado, marcado en verde, es el único que pasa a la aplicación.
 
----
+## Decisión 1. El modelo se ejecuta en el navegador, no en un servidor
 
-## ADR-1 · Inferencia en el navegador (client-side) en vez de API en servidor
+Qué se decidió. El modelo funciona dentro del navegador de la persona con TensorFlow.js,
+que es la versión de TensorFlow para páginas web. La aplicación son solo archivos que se
+sirven como una web normal.
 
-**Decisión.** El modelo se ejecuta en el navegador del usuario con TensorFlow.js. La app
-es un conjunto de archivos estáticos.
+Otras opciones que se valoraron. Poner el modelo en un servidor y que la aplicación le
+mande la información por internet para recibir la respuesta. También usar servicios de
+inteligencia artificial en la nube.
 
-**Alternativas consideradas.**
-- API REST con el modelo en un servidor (p. ej. FastAPI + contenedor en la nube).
-- Inferencia en la nube gestionada (SageMaker, Vertex AI).
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Latencia.** El reconocimiento de signos es en tiempo real (varios frames por
-  segundo). Enviar keypoints a un servidor y esperar respuesta introduce un retardo que
-  rompe la experiencia. En local, la inferencia es inmediata.
-- **Coste.** Sin servidor no hay factura de cómputo ni de tráfico. El proyecto es 0 €,
-  requisito del alumno (sin cuenta cloud).
-- **Privacidad.** El vídeo de la cámara nunca sale del dispositivo — relevante en un caso
+- Velocidad. El reconocimiento es en tiempo real. Mandar la información a un servidor y
+  esperar la respuesta introduce un retraso que estropea la experiencia. En el navegador la
+  respuesta es inmediata.
+- Coste. Sin servidor no hay factura. El proyecto tiene que ser gratuito porque no hay
+  cuenta en la nube.
+- Privacidad. La imagen de la cámara nunca sale del dispositivo, algo relevante en un caso
   de uso sanitario y de accesibilidad.
-- **Despliegue trivial.** Archivos estáticos → hosting gratuito (GitHub Pages, Netlify…).
+- Publicación sencilla. Al ser archivos estáticos se pueden alojar gratis en sitios como
+  GitHub Pages.
 
-**Coste / limitación aceptada.** El modelo debe ser pequeño para correr fluido en el
-navegador (limita el tamaño de la red). Se asume: el modelo temporal sobre keypoints es
-ligero de por sí, así que encaja. Plan B si la conversión falla: API en Hugging Face
-Spaces (gratis).
+Limitación que se asume. El modelo debe ser pequeño para ir fluido en el navegador. El
+modelo que usamos, basado en secuencias de puntos, ya es ligero de por sí, así que encaja.
+Si la conversión al navegador diera problemas, el plan alternativo es servir el modelo
+desde Hugging Face Spaces, que es gratuito.
 
----
+## Decisión 2. La entrada son puntos clave, no la imagen de vídeo
 
-## ADR-2 · Entrada por keypoints (MediaPipe) en vez de vídeo crudo
+Qué se decidió. El modelo recibe secuencias de puntos clave, es decir, las posiciones de
+las manos y el cuerpo que localiza MediaPipe, en lugar de la imagen de vídeo completa.
 
-**Decisión.** El modelo consume secuencias de *keypoints* (coordenadas de pose y manos)
-extraídas por MediaPipe, no píxeles de vídeo.
+Otras opciones que se valoraron. Usar redes que procesan directamente los fotogramas de
+vídeo, que son más pesadas y necesitan más capacidad de cálculo.
 
-**Alternativas consideradas.**
-- CNN 3D / CNN+RNN sobre frames de vídeo crudo.
-- Modelos de vídeo preentrenados (I3D, video transformers).
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Coste computacional.** Procesar píxeles exige CNNs grandes y GPU potente. Los
-  keypoints reducen cada frame a ~150 números → modelo pequeño, entrenable en Colab
-  gratis y ejecutable en el navegador.
-- **Invarianza.** Los keypoints abstraen fondo, iluminación, ropa y tono de piel. El
-  modelo aprende el *gesto*, no la apariencia — generaliza mejor con pocos datos.
-- **Disponibilidad de datos.** SWL-LSE ya distribuye los keypoints de MediaPipe
-  extraídos: el formato de entrada coincide exactamente con la fuente de datos.
-- **Enfoque del estado del arte.** Es el método estándar en reconocimiento de signos
-  aislados con recursos limitados.
+- Menos cálculo. Procesar imágenes completas exige redes grandes y tarjetas gráficas
+  potentes. Los puntos clave reducen cada fotograma a unas pocas cifras, así que el modelo
+  es pequeño y se puede entrenar en Colab gratis y ejecutar en el navegador.
+- Se centra en el gesto. Los puntos clave dejan fuera el fondo, la ropa, la luz y el tono
+  de piel. El modelo aprende el movimiento del signo y no la apariencia de la persona, lo
+  que ayuda a que funcione con gente nueva.
+- Encaja con los datos. SWL-LSE ya trae los puntos clave calculados, así que coinciden con
+  lo que espera el modelo.
 
-**Coste / limitación aceptada.** Se pierde información que no capturan los keypoints (p.
-ej. matices finos de expresión facial). Para un vocabulario acotado de signos manuales es
-asumible; se documenta como limitación.
+Limitación que se asume. Se pierden detalles que los puntos clave no recogen, como matices
+finos de la expresión de la cara. Para un vocabulario de signos hechos con las manos es
+asumible, y se deja indicado como limitación.
 
----
+## Decisión 3. Un modelo que entiende secuencias en el tiempo
 
-## ADR-3 · Modelo temporal (Transformer / GRU) en vez de clasificador por frame
+Qué se decidió. Un modelo que analiza la secuencia completa del signo. Se empieza con una
+red pensada para datos en orden, y se prueba también un Transformer, que es un tipo de red
+muy eficaz para este tipo de datos.
 
-**Decisión.** Un modelo de secuencia (baseline GRU/LSTM → Transformer temporal) que
-clasifica la secuencia completa de keypoints de un signo.
+Otras opciones que se valoraron. Clasificar cada fotograma por separado y votar el
+resultado, lo que ignora el movimiento. También usar redes específicas para esqueletos,
+más complejas de montar.
 
-**Alternativas consideradas.**
-- Clasificar frame a frame y votar (ignora la dinámica temporal).
-- Modelos de grafos espacio-temporales (ST-GCN) sobre el esqueleto.
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Un signo es movimiento, no una pose.** La información está en cómo evolucionan las
-  manos en el tiempo; un modelo de secuencia lo captura de forma natural.
-- **Progresión de complejidad.** Se empieza con GRU/LSTM (baseline sólido y rápido) y se
-  sube a Transformer solo si la evaluación lo justifica — decisión guiada por datos, no
-  por moda.
-- **ST-GCN** es potente pero más complejo de implementar y desplegar en el navegador; se
-  reserva como línea futura.
+- Un signo es movimiento, no una postura fija. La información está en cómo cambian las
+  manos con el tiempo, y un modelo de secuencia lo capta de forma natural.
+- Se avanza de lo simple a lo complejo. Se parte de un modelo sencillo que ya funciona bien
+  y solo se sube a uno más avanzado si los resultados lo justifican. Así la decisión la
+  guían los datos y no la moda.
 
-**Coste / limitación aceptada.** Los modelos de secuencia necesitan longitud fija
-(padding/truncado), lo que exige segmentar dónde empieza y acaba el signo.
+Limitación que se asume. Este tipo de modelo necesita secuencias de una duración fija, lo
+que obliga a decidir dónde empieza y dónde acaba cada signo.
 
----
+## Decisión 4. Aplicación web instalable en lugar de aplicación de móvil nativa
 
-## ADR-4 · Web app / PWA en vez de app nativa
+Qué se decidió. La interfaz es una aplicación web que se puede instalar en el móvil y que
+funciona en el navegador.
 
-**Decisión.** Interfaz como web app instalable (PWA) que funciona en el navegador del
-móvil.
+Otras opciones que se valoraron. Una aplicación de móvil nativa, es decir, hecha
+específicamente para Android o iPhone. También una demostración de escritorio.
 
-**Alternativas consideradas.**
-- App nativa Android/iOS (Flutter, React Native, nativo) con modelo on-device (TFLite).
-- Demo local de escritorio (Streamlit).
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Reparto de esfuerzo.** En 25 días, una app nativa consume días en trabajo NO-IA
-  (build, tiendas, integración de cámara). La web app da el 90 % del efecto "es una app"
-  con una fracción del esfuerzo, dejando el tiempo para el modelo.
-- **Multiplataforma gratis.** Un solo código corre en móvil y escritorio.
-- **Demo en vivo.** Se abre en el navegador del teléfono delante del tribunal sin
+- Reparto del tiempo. En 25 días, una aplicación nativa consume muchos días en tareas que
+  no son de inteligencia artificial, como la instalación y las tiendas de aplicaciones. La
+  web ofrece casi el mismo efecto de aplicación con mucho menos esfuerzo, y deja tiempo
+  para el modelo.
+- Funciona en todas partes. Un solo desarrollo sirve para móvil y ordenador.
+- Demostración fácil. Se abre en el navegador del teléfono delante del tribunal sin
   instalar nada.
-- **Encaja con client-side (ADR-1)** y con MediaPipe JS.
 
-**Coste / limitación aceptada.** Menos acceso a APIs nativas y rendimiento algo inferior a
-una app compilada. Irrelevante para esta demo. Envolver como app nativa queda como extra
-si sobra tiempo.
+Limitación que se asume. Se accede peor a las funciones propias del móvil y el rendimiento
+es algo menor que en una aplicación nativa. Para esta demostración no supone un problema.
+Envolverla como aplicación nativa queda como añadido si sobra tiempo.
 
----
+## Decisión 5. Un solo modelo para las dos funciones
 
-## ADR-5 · Un modelo, dos funciones
+Qué se decidió. Las dos funciones, aprendizaje y comunicación, comparten el mismo modelo de
+reconocimiento y solo se diferencian en lo que la aplicación hace con el resultado.
 
-**Decisión.** Las dos funciones (aprendizaje y comunicación) comparten el mismo modelo de
-reconocimiento; solo difieren en la capa de aplicación.
+Otras opciones que se valoraron. Entrenar dos modelos separados, uno para cada función.
 
-**Alternativas consideradas.**
-- Dos modelos independientes, uno por función.
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **El ML es el mismo problema:** "¿qué signo es este?". Lo que cambia es qué se hace con
-  la respuesta (corregir vs mostrar texto).
-- **Coste marginal casi nulo.** Añadir la segunda función es trabajo de interfaz, no de
-  entrenamiento → hace viable "las dos" en 25 días.
-- **Coherencia y mantenimiento:** un solo modelo que versionar, evaluar y desplegar.
+- El problema de fondo es el mismo, saber qué signo se está haciendo. Lo que cambia es si
+  después se corrige a la persona o se muestra el texto.
+- El coste añadido es casi nulo. Sumar la segunda función es trabajo de interfaz, no de
+  entrenamiento, lo que hace posible tener las dos en 25 días.
+- Es más fácil de mantener. Hay un único modelo que evaluar, versionar y publicar.
 
-**Coste / limitación aceptada.** Ambas funciones dependen de la calidad del mismo modelo:
-si el reconocedor falla, fallan las dos. Se mitiga concentrando el esfuerzo en el modelo
-antes de construir las interfaces.
+Limitación que se asume. Las dos funciones dependen de la calidad del mismo modelo. Si el
+reconocimiento falla, fallan las dos. Por eso se concentra el esfuerzo en el modelo antes
+de construir las interfaces.
 
----
+## Decisión 6. SWL-LSE como fuente principal de datos
 
-## ADR-6 · SWL-LSE como dataset principal
+Qué se decidió. Usar SWL-LSE como base, Sign4all como refuerzo opcional y grabaciones
+propias para la demostración.
 
-**Decisión.** SWL-LSE (Zenodo, CC-BY 4.0) como fuente base; Sign4all opcional; grabaciones
-propias para la demo.
+Otras opciones que se valoraron. Conjuntos de datos de lengua de signos americana. También
+grabar todos los datos a mano, o usar datos de lengua de signos continua, que es un
+problema mucho más difícil.
 
-**Alternativas consideradas.**
-- Datasets de ASL (americana): WLASL, MS-ASL, dataset de Google (Kaggle).
-- Grabar todo el dataset a mano.
-- LSE_UVIGO (LSE continua).
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Es LSE (español)**, no ASL: alineado con el objetivo y el hueco tecnológico real.
-- **Keypoints MediaPipe ya extraídos** → coincide con la entrada del modelo (ADR-2).
-- **124 signantes** → permite validación signer-independent (ADR-7) y generalización.
-- **Descarga directa, licencia abierta**, sin comités ni solicitudes.
-- **Vocabulario sanitario** → refuerza el caso de uso (barrera crítica en salud).
+- Es lengua de signos española, que es el objetivo del proyecto y donde hay un hueco real.
+- Ya trae los puntos clave calculados, así que coincide con lo que espera el modelo.
+- Tiene 124 personas distintas, lo que permite comprobar que el modelo funciona con gente
+  nueva.
+- Se descarga directamente y con licencia abierta, sin trámites ni permisos.
+- Su vocabulario sanitario refuerza el motivo del proyecto, porque la salud es donde la
+  barrera de comunicación es más grave.
 
-**Coste / limitación aceptada.** ~27 muestras/clase para 300 clases es poco → se acota el
-vocabulario (ADR-8). LSE continua se descarta por ahora (problema de investigación).
+Limitación que se asume. Hay pocos ejemplos por signo si se usan los 300, así que se acota
+el vocabulario, como se explica en la decisión 8. La lengua de signos continua se descarta
+por ahora por ser demasiado difícil para el plazo.
 
----
+## Decisión 7. Evaluar separando los datos por persona
 
-## ADR-7 · Validación signer-independent
+Qué se decidió. Los grupos de entrenamiento, ajuste y prueba se forman por persona, de modo
+que ninguna persona esté en más de un grupo.
 
-**Decisión.** Los splits train/val/test se hacen **por signante**: ningún signante
-aparece en más de una partición.
+Otra opción que se valoró. Repartir los ejemplos al azar, que es lo habitual en los
+tutoriales.
 
-**Alternativas consideradas.**
-- Split aleatorio por muestra (lo habitual en tutoriales).
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Evita fuga de datos (data leakage).** Con split aleatorio, el modelo puede memorizar
-  el estilo de cada persona y dar una métrica inflada que no refleja el uso real (personas
-  nuevas).
-- **Mide lo que importa:** que funcione con signantes que nunca vio — el escenario real de
-  la app.
-- **Rigor defendible:** es la pregunta metodológica clave que un tribunal formulará;
-  tenerla resuelta de antemano es un punto fuerte.
+- Evita un engaño estadístico. Con el reparto al azar, el modelo puede memorizar la forma
+  de signar de cada persona y dar una nota alta que no se corresponde con el uso real.
+- Mide lo que de verdad importa, que es que funcione con personas que el modelo no ha visto
+  antes, que es lo que pasará cuando se use.
+- Demuestra rigor. Es la pregunta de método que un tribunal va a plantear, y tenerla
+  resuelta de antemano es un punto fuerte.
 
-**Coste / limitación aceptada.** La métrica honesta será más baja que con split aleatorio.
-Se asume y se explica: un número honesto vale más que uno inflado.
+Limitación que se asume. La nota honesta será más baja que con el reparto al azar. Se acepta
+y se explica, porque un resultado honesto vale más que uno inflado.
 
----
+## Decisión 8. Vocabulario acotado de 40 a 60 signos
 
-## ADR-8 · Vocabulario acotado (40-60 signos)
+Qué se decidió. Entrenar con un grupo reducido de los signos que más ejemplos tienen, en
+lugar de los 300 completos.
 
-**Decisión.** Entrenar sobre un subconjunto de los signos mejor representados en vez de
-las 300 clases completas.
+Otra opción que se valoró. Usar los 300 signos desde el principio.
 
-**Alternativas consideradas.**
-- Usar las 300 clases desde el principio.
+Por qué se eligió esta opción.
 
-**Justificación.**
-- **Datos por clase.** Con ~27 muestras/clase, 300 clases dan un modelo débil. Acotar
-  concentra los datos donde el modelo puede aprender bien.
-- **Producto usable.** 40-60 signos bien reconocidos son más útiles (y demostrables) que
-  300 con baja fiabilidad.
-- **Escalabilidad demostrada.** "Escalar a 300 signos" queda como trabajo futuro claro y
-  honesto.
+- Con unos 27 ejemplos por signo, 300 signos dan un modelo débil. Acotar concentra los
+  datos donde el modelo sí puede aprender bien.
+- Un producto usable. De 40 a 60 signos bien reconocidos son más útiles y más fáciles de
+  demostrar que 300 poco fiables.
+- Deja claro el camino de mejora. Ampliar a 300 signos queda como trabajo futuro concreto.
 
-**Coste / limitación aceptada.** Cobertura de vocabulario menor. Es una limitación
-declarada y coherente con el encuadre de "prueba de concepto".
+Limitación que se asume. La aplicación reconoce menos vocabulario. Es una limitación
+declarada y coherente con el planteamiento de prueba de concepto.
 
----
+## Decisión 9. Herramientas gratuitas de principio a fin
 
-## ADR-9 · Stack gratuito de principio a fin
+Qué se decidió. Todo el proyecto usa herramientas gratuitas, sin ninguna cuenta de pago.
 
-**Decisión.** Todo el proyecto usa herramientas gratuitas (sin cuenta cloud de pago).
+Por qué se eligió esta opción.
 
-**Justificación.**
-- Requisito del alumno (sin cuenta AWS).
-- **Reproducibilidad.** Cualquiera puede replicar el proyecto sin coste — valioso para la
-  memoria.
-- El diseño client-side (ADR-1) elimina el coste de servidor de raíz.
+- Es un requisito, porque no hay cuenta en la nube.
+- Cualquiera puede reproducir el proyecto sin gastar dinero, algo valioso para la memoria.
+- El diseño de ejecutar el modelo en el navegador elimina el gasto de servidor desde el
+  principio.
 
-**Herramientas:** Colab/Kaggle (entrenar), MLflow local o DagsHub (tracking), GitHub Pages
-/ Netlify / Vercel / HF Spaces (hosting), GitHub Actions (CI), Zenodo (datos).
+Herramientas. Colab o Kaggle para entrenar, MLflow en local o DagsHub para el registro de
+experimentos, GitHub Pages u opciones similares para alojar la aplicación, GitHub Actions
+para la automatización y Zenodo para los datos.
 
-**Coste / limitación aceptada.** No se demuestra MLOps en cloud gestionado (SageMaker,
-etc.) en este proyecto; se compensa con MLOps reproducible ligero (pipeline, MLflow, CI,
-evals, despliegue real).
+Limitación que se asume. En este proyecto no se demuestra el uso de servicios gestionados
+de inteligencia artificial en la nube. Se compensa con prácticas de MLOps más ligeras pero
+igual de válidas, como el proceso reproducible, el registro de experimentos, la
+automatización, la evaluación y un despliegue real.
 
----
-
-## Trazabilidad de decisiones
+## Cómo se relacionan las decisiones
 
 ```mermaid
 flowchart TD
-    R["Requisito: 0 euros, demo en vivo, wow, rigor"] --> A1["ADR-1 client-side"]
-    R --> A9["ADR-9 stack gratuito"]
-    A1 --> A4["ADR-4 web app PWA"]
-    D["Requisito: pocos datos y cómputo ligero"] --> A2["ADR-2 keypoints"]
-    A2 --> A3["ADR-3 modelo temporal"]
-    A2 --> A6["ADR-6 SWL-LSE"]
-    A6 --> A7["ADR-7 signer-independent"]
-    A6 --> A8["ADR-8 vocabulario acotado"]
-    F["Requisito: 2 funciones en 25 días"] --> A5["ADR-5 un modelo, dos modos"]
+    R["Requisito: 0 euros, demo en vivo, wow, rigor"] --> A1["Decisión 1 modelo en el navegador"]
+    R --> A9["Decisión 9 herramientas gratuitas"]
+    A1 --> A4["Decisión 4 aplicación web"]
+    D["Requisito: pocos datos y poco cálculo"] --> A2["Decisión 2 puntos clave"]
+    A2 --> A3["Decisión 3 modelo de secuencias"]
+    A2 --> A6["Decisión 6 SWL-LSE"]
+    A6 --> A7["Decisión 7 separar por persona"]
+    A6 --> A8["Decisión 8 vocabulario acotado"]
+    F["Requisito: 2 funciones en 25 días"] --> A5["Decisión 5 un modelo, dos funciones"]
 
     style R fill:#6554C0,color:#fff
     style D fill:#6554C0,color:#fff
