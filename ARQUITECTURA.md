@@ -191,25 +191,36 @@ Limitación que se asume. Hay pocos ejemplos por signo si se usan los 300, así 
 el vocabulario, como se explica en la decisión 8. La lengua de signos continua se descarta
 por ahora por ser demasiado difícil para el plazo.
 
-## Decisión 7. Evaluar separando los datos por persona
+## Decisión 7. Evaluación con la separación oficial y una prueba con personas nuevas
 
-Qué se decidió. Los grupos de entrenamiento, ajuste y prueba se forman por persona, de modo
-que ninguna persona esté en más de un grupo.
+Qué se decidió. Se usa la separación oficial en tres grupos que publican los autores del
+conjunto de datos: entrenamiento, validación y prueba. Además, se reserva una prueba propia
+con grabaciones de personas que no están en el conjunto de datos.
 
-Otra opción que se valoró. Repartir los ejemplos al azar, que es lo habitual en los
-tutoriales.
+Contexto. Lo ideal para evaluar un reconocedor de signos es separar los datos por persona,
+de modo que ninguna persona esté en más de un grupo. Si no se hace así, el modelo puede
+memorizar la forma de signar de cada persona y dar una nota alta que no se corresponde con
+el uso real, en el que aparecerán personas nuevas.
+
+Qué se pudo hacer y qué no. Al explorar los datos se comprobó que la identidad de la
+persona que hizo cada grabación no se publica. Los autores solo comparten los puntos del
+cuerpo y las manos, por motivos de privacidad. Como falta ese dato, no es posible construir
+una separación por persona propia ni verificar si la separación oficial la respeta.
 
 Por qué se eligió esta opción.
 
-- Evita un engaño estadístico. Con el reparto al azar, el modelo puede memorizar la forma
-  de signar de cada persona y dar una nota alta que no se corresponde con el uso real.
-- Mide lo que de verdad importa, que es que funcione con personas que el modelo no ha visto
-  antes, que es lo que pasará cuando se use.
-- Demuestra rigor. Es la pregunta de método que un tribunal va a plantear, y tenerla
-  resuelta de antemano es un punto fuerte.
+- Usar el grupo de prueba oficial que los autores reservan es una práctica habitual y
+  correcta.
+- Grabar signos de personas ajenas al conjunto de datos, empezando por el propio autor del
+  proyecto, ofrece la prueba de generalización más sincera posible. Si el modelo acierta
+  con alguien a quien no ha visto nunca, demuestra que ha aprendido el signo y no a la
+  persona.
+- Ser transparente sobre lo que se puede verificar y lo que no es, en sí mismo, un punto de
+  rigor.
 
-Limitación que se asume. La nota honesta será más baja que con el reparto al azar. Se acepta
-y se explica, porque un resultado honesto vale más que uno inflado.
+Limitación que se asume. No se puede garantizar que la separación oficial esté hecha por
+persona, y así se hará constar en la memoria. La prueba con personas nuevas compensa en
+parte esta limitación, aunque sea con pocas personas.
 
 ## Decisión 8. Vocabulario acotado de 40 a 60 signos
 
