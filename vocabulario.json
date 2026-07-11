@@ -1,0 +1,320 @@
+[
+  {
+    "indice_modelo": 0,
+    "numero_signo_original": 110,
+    "nombre": "DOLOR",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 1,
+    "numero_signo_original": 230,
+    "nombre": "PIS",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 2,
+    "numero_signo_original": 8,
+    "nombre": "AFECTAR",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 3,
+    "numero_signo_original": 81,
+    "nombre": "COMER",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 4,
+    "numero_signo_original": 64,
+    "nombre": "CACA2(L-PEC)",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 5,
+    "numero_signo_original": 142,
+    "nombre": "ESTRES",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 6,
+    "numero_signo_original": 67,
+    "nombre": "CANSADO2",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 7,
+    "numero_signo_original": 63,
+    "nombre": "CACA2",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 8,
+    "numero_signo_original": 30,
+    "nombre": "ANSIEDAD",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 9,
+    "numero_signo_original": 125,
+    "nombre": "EMBARAZO",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 10,
+    "numero_signo_original": 105,
+    "nombre": "DIABETES",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 11,
+    "numero_signo_original": 9,
+    "nombre": "AFECTAR(s)",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 12,
+    "numero_signo_original": 112,
+    "nombre": "DORMIR",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 13,
+    "numero_signo_original": 186,
+    "nombre": "MAREO",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 14,
+    "numero_signo_original": 130,
+    "nombre": "ENFERMO",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 15,
+    "numero_signo_original": 100,
+    "nombre": "DEBIL",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 16,
+    "numero_signo_original": 235,
+    "nombre": "PROBAR",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 17,
+    "numero_signo_original": 66,
+    "nombre": "CANCER",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 18,
+    "numero_signo_original": 98,
+    "nombre": "CURAR",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 19,
+    "numero_signo_original": 114,
+    "nombre": "DROGA",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 20,
+    "numero_signo_original": 293,
+    "nombre": "VER^PROBAR",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 21,
+    "numero_signo_original": 231,
+    "nombre": "PIS2",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 22,
+    "numero_signo_original": 25,
+    "nombre": "ANALISIS-DE-SANGRE",
+    "ejemplos": 52
+  },
+  {
+    "indice_modelo": 23,
+    "numero_signo_original": 10,
+    "nombre": "AGOTAMIENTO",
+    "ejemplos": 52
+  },
+  {
+    "indice_modelo": 24,
+    "numero_signo_original": 226,
+    "nombre": "PIEL^CUERPO",
+    "ejemplos": 51
+  },
+  {
+    "indice_modelo": 25,
+    "numero_signo_original": 101,
+    "nombre": "DEPRESION",
+    "ejemplos": 51
+  },
+  {
+    "indice_modelo": 26,
+    "numero_signo_original": 97,
+    "nombre": "CUIDAR",
+    "ejemplos": 50
+  },
+  {
+    "indice_modelo": 27,
+    "numero_signo_original": 187,
+    "nombre": "MAREO2",
+    "ejemplos": 50
+  },
+  {
+    "indice_modelo": 28,
+    "numero_signo_original": 45,
+    "nombre": "AZUCAR",
+    "ejemplos": 49
+  },
+  {
+    "indice_modelo": 29,
+    "numero_signo_original": 5,
+    "nombre": "ACONSEJAR",
+    "ejemplos": 49
+  },
+  {
+    "indice_modelo": 30,
+    "numero_signo_original": 170,
+    "nombre": "HOSPITAL",
+    "ejemplos": 48
+  },
+  {
+    "indice_modelo": 31,
+    "numero_signo_original": 163,
+    "nombre": "HAMBRE",
+    "ejemplos": 48
+  },
+  {
+    "indice_modelo": 32,
+    "numero_signo_original": 209,
+    "nombre": "NACER",
+    "ejemplos": 47
+  },
+  {
+    "indice_modelo": 33,
+    "numero_signo_original": 47,
+    "nombre": "AZUCAR(2M)",
+    "ejemplos": 47
+  },
+  {
+    "indice_modelo": 34,
+    "numero_signo_original": 215,
+    "nombre": "OIR^MITAD",
+    "ejemplos": 47
+  },
+  {
+    "indice_modelo": 35,
+    "numero_signo_original": 12,
+    "nombre": "ALCOHOL",
+    "ejemplos": 46
+  },
+  {
+    "indice_modelo": 36,
+    "numero_signo_original": 152,
+    "nombre": "GARGANTA2",
+    "ejemplos": 46
+  },
+  {
+    "indice_modelo": 37,
+    "numero_signo_original": 150,
+    "nombre": "GANA",
+    "ejemplos": 45
+  },
+  {
+    "indice_modelo": 38,
+    "numero_signo_original": 146,
+    "nombre": "FARMACIA",
+    "ejemplos": 45
+  },
+  {
+    "indice_modelo": 39,
+    "numero_signo_original": 70,
+    "nombre": "CENTRO^VIVIR",
+    "ejemplos": 45
+  },
+  {
+    "indice_modelo": 40,
+    "numero_signo_original": 37,
+    "nombre": "ARTERIA2",
+    "ejemplos": 44
+  },
+  {
+    "indice_modelo": 41,
+    "numero_signo_original": 48,
+    "nombre": "AZUCAR(M-ES)",
+    "ejemplos": 44
+  },
+  {
+    "indice_modelo": 42,
+    "numero_signo_original": 232,
+    "nombre": "PIS3",
+    "ejemplos": 44
+  },
+  {
+    "indice_modelo": 43,
+    "numero_signo_original": 153,
+    "nombre": "GORDO",
+    "ejemplos": 43
+  },
+  {
+    "indice_modelo": 44,
+    "numero_signo_original": 218,
+    "nombre": "OPERAR",
+    "ejemplos": 43
+  },
+  {
+    "indice_modelo": 45,
+    "numero_signo_original": 233,
+    "nombre": "PIS4",
+    "ejemplos": 43
+  },
+  {
+    "indice_modelo": 46,
+    "numero_signo_original": 270,
+    "nombre": "SUFRIR",
+    "ejemplos": 41
+  },
+  {
+    "indice_modelo": 47,
+    "numero_signo_original": 165,
+    "nombre": "HERIDA",
+    "ejemplos": 41
+  },
+  {
+    "indice_modelo": 48,
+    "numero_signo_original": 147,
+    "nombre": "FIEBRE2",
+    "ejemplos": 41
+  },
+  {
+    "indice_modelo": 49,
+    "numero_signo_original": 294,
+    "nombre": "VIRUS",
+    "ejemplos": 41
+  },
+  {
+    "indice_modelo": 50,
+    "numero_signo_original": 158,
+    "nombre": "GRIPE",
+    "ejemplos": 40
+  },
+  {
+    "indice_modelo": 51,
+    "numero_signo_original": 14,
+    "nombre": "ALERGIA2",
+    "ejemplos": 40
+  },
+  {
+    "indice_modelo": 52,
+    "numero_signo_original": 144,
+    "nombre": "EVITAR",
+    "ejemplos": 40
+  }
+]
