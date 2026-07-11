@@ -1,0 +1,59 @@
+# ---- Datos (NO subir: SWL-LSE pesa ~3.5 GB, se descarga aparte) ----
+data/
+datasets/
+*.mp4
+*.avi
+*.mov
+*.pkl
+*.pickle
+*.npy
+*.npz
+*.csv
+*.h5
+*.hdf5
+
+# ---- Modelos entrenados (grandes; usar releases o almacenamiento aparte) ----
+models/
+checkpoints/
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.keras
+saved_model/
+# excepción: el modelo exportado a TF.js para la web app SÍ se versiona
+!web/**/model.json
+!web/**/*.bin
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.python-version
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---- MLflow / experimentos ----
+mlruns/
+mlflow.db
+.mlflow/
+
+# ---- Web / Node ----
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# ---- Entorno / secretos ----
+.env
+.env.*
+*.local
+
+# ---- Sistema / editor ----
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
