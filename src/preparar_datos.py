@@ -5,7 +5,7 @@ Para cada uno de los tres grupos oficiales, entrenamiento, validacion y prueba, 
 programa:
 
   1. Se queda solo con las grabaciones de nuestro vocabulario de 53 signos.
-  2. Toma las coordenadas horizontal y vertical de cada punto.
+  2. Toma las coordenadas x, y, z de cada punto.
   3. Normaliza cada grabacion usando los hombros como referencia, de modo que la posicion y
      el tamano de la persona en la imagen dejen de importar.
   4. Ajusta todas las grabaciones a la misma duracion, 56 fotogramas, rellenando las cortas
@@ -40,35 +40,37 @@ def cargar_vocabulario():
 
 def normalizar(grabacion):
     """
-    Normaliza una grabacion (fotogramas, 61, 4) y devuelve (fotogramas, 61, 2).
+    Normaliza una grabacion (fotogramas, 61, 4) y devuelve (fotogramas, 61, 3).
 
-    Centra los puntos en el punto medio de los hombros y los escala por la distancia entre
-    hombros. Los puntos que no se detectaron, que vienen a cero, se dejan a cero.
+    Conserva las tres coordenadas x, y, z. Centra los puntos en el punto medio de los
+    hombros y los escala por la distancia entre hombros. Los puntos que no se detectaron,
+    que vienen a cero, se dejan a cero.
     """
     # Un punto esta presente si alguno de sus cuatro valores no es cero.
     presente = np.any(grabacion != 0, axis=-1)  # forma (fotogramas, 61)
 
-    # Nos quedamos con las coordenadas horizontal y vertical.
-    xy = grabacion[:, :, :2].copy()  # forma (fotogramas, 61, 2)
+    # Nos quedamos con las coordenadas x, y, z.
+    xyz = grabacion[:, :, :3].copy()  # forma (fotogramas, 61, 3)
 
     # Referencia: usamos los fotogramas donde se ven los dos hombros.
     hombros_ok = presente[:, POS_HOMBRO_IZQ] & presente[:, POS_HOMBRO_DER]
     if not np.any(hombros_ok):
         # Sin hombros no podemos normalizar; devolvemos los puntos tal cual.
-        xy[~presente] = 0
-        return xy.astype(np.float32)
+        xyz[~presente] = 0
+        return xyz.astype(np.float32)
 
-    izq = xy[hombros_ok, POS_HOMBRO_IZQ, :]
-    der = xy[hombros_ok, POS_HOMBRO_DER, :]
-    centro = ((izq + der) / 2).mean(axis=0)  # punto medio de los hombros
-    ancho = np.linalg.norm(izq - der, axis=1).mean()  # distancia media entre hombros
+    izq = xyz[hombros_ok, POS_HOMBRO_IZQ, :]
+    der = xyz[hombros_ok, POS_HOMBRO_DER, :]
+    centro = ((izq + der) / 2).mean(axis=0)  # punto medio de los hombros, en x, y, z
+    # La distancia entre hombros se mide en el plano de la imagen, con x e y.
+    ancho = np.linalg.norm((izq - der)[:, :2], axis=1).mean()
     ancho = max(ancho, 1e-6)  # evitar dividir por cero
 
-    xy = (xy - centro) / ancho
+    xyz = (xyz - centro) / ancho
 
     # Los puntos ausentes vuelven a cero tras la normalizacion.
-    xy[~presente] = 0
-    return xy.astype(np.float32)
+    xyz[~presente] = 0
+    return xyz.astype(np.float32)
 
 
 def ajustar_duracion(grabacion):

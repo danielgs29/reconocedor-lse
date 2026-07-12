@@ -23,10 +23,12 @@ def _puntos_presentes(secuencia):
 
 
 def girar(secuencia, angulo):
-    """Gira todas las coordenadas un angulo dado, en radianes, respecto al centro."""
+    """Gira las coordenadas x, y un angulo dado, en radianes. La profundidad z no cambia."""
     coseno, seno = np.cos(angulo), np.sin(angulo)
     rotacion = np.array([[coseno, -seno], [seno, coseno]], dtype=np.float32)
-    return (secuencia @ rotacion.T).astype(np.float32)
+    resultado = secuencia.copy()
+    resultado[..., :2] = secuencia[..., :2] @ rotacion.T
+    return resultado.astype(np.float32)
 
 
 def escalar(secuencia, factor):

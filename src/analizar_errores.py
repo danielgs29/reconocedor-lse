@@ -25,7 +25,9 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from tensorflow import keras
 
-RUTA_MODELO = "models/transformer_45conceptos.keras"
+import caracteristicas
+
+RUTA_MODELO = "models/transformer_z_movimiento.keras"
 RUTA_GRAFICO = "/Users/daniel/Documents/GitHub/master/diario-proyecto-lse/matriz-confusion.png"
 
 
@@ -42,7 +44,7 @@ def cargar_nombres():
 def cargar_grupo(grupo):
     X = np.load(f"data/processed/X_{grupo}.npy")
     y = np.load(f"data/processed/y_{grupo}.npy")
-    return X.reshape(X.shape[0], 56, 122), y
+    return caracteristicas.a_entrada_modelo(X), y
 
 
 def main():

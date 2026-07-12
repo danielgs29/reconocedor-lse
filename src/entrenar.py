@@ -21,6 +21,7 @@ import numpy as np
 from tensorflow import keras
 
 import aumento
+import caracteristicas
 import modelos
 
 SEMILLA = 42
@@ -30,16 +31,10 @@ EXPERIMENTO = "reconocedor-lse"
 
 
 def cargar(grupo):
-    """Carga las secuencias y respuestas de un grupo, sin aplanar todavia."""
-    X = np.load(CARPETA_DATOS / f"X_{grupo}.npy")  # (n, 56, 61, 2)
+    """Carga las secuencias y respuestas de un grupo, sin preparar todavia."""
+    X = np.load(CARPETA_DATOS / f"X_{grupo}.npy")  # (n, 56, 61, 3)
     y = np.load(CARPETA_DATOS / f"y_{grupo}.npy")
     return X, y
-
-
-def aplanar(X):
-    """Une los 61 puntos y sus 2 coordenadas en 122 numeros por fotograma."""
-    n, fotogramas, puntos, coords = X.shape
-    return X.reshape(n, fotogramas, puntos * coords)
 
 
 def crear_modelo(tipo, num_pasos, num_rasgos, num_signos):
@@ -67,8 +62,12 @@ def main():
     X_val, y_val = cargar("val")
     X_test, y_test = cargar("test")
 
-    X_train, X_val, X_test = aplanar(X_train), aplanar(X_val), aplanar(X_test)
+    # Preparamos la entrada del modelo (anade movimiento y aplana) despues del aumento.
+    X_train = caracteristicas.a_entrada_modelo(X_train)
+    X_val = caracteristicas.a_entrada_modelo(X_val)
+    X_test = caracteristicas.a_entrada_modelo(X_test)
     print(f"Entrenamiento: {X_train.shape[0]} grabaciones (aumento: {args.aumento} copias)")
+    print(f"Numeros por fotograma: {X_train.shape[2]}")
 
     mlflow.set_experiment(EXPERIMENTO)
     with mlflow.start_run(run_name=args.nombre):

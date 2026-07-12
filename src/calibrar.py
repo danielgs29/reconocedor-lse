@@ -26,7 +26,9 @@ from pathlib import Path
 import numpy as np
 from tensorflow import keras
 
-RUTA_MODELO = "models/transformer_45conceptos.keras"
+import caracteristicas
+
+RUTA_MODELO = "models/transformer_z_movimiento.keras"
 RUTA_SALIDA = "calibracion.json"
 
 
@@ -40,7 +42,7 @@ def softmax(z, temperatura=1.0):
 def cargar_grupo(grupo):
     X = np.load(f"data/processed/X_{grupo}.npy")
     y = np.load(f"data/processed/y_{grupo}.npy")
-    return X.reshape(X.shape[0], 56, 122), y
+    return caracteristicas.a_entrada_modelo(X), y
 
 
 def error_calibracion(probabilidades, y, num_cajas=10):
