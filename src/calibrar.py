@@ -26,7 +26,7 @@ from pathlib import Path
 import numpy as np
 from tensorflow import keras
 
-RUTA_MODELO = "models/transformer_aumento3.keras"
+RUTA_MODELO = "models/transformer_45conceptos.keras"
 RUTA_SALIDA = "calibracion.json"
 
 

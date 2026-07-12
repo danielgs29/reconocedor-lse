@@ -42,12 +42,12 @@ def aplanar(X):
     return X.reshape(n, fotogramas, puntos * coords)
 
 
-def crear_modelo(tipo, num_pasos, num_rasgos):
+def crear_modelo(tipo, num_pasos, num_rasgos, num_signos):
     """Crea el modelo elegido: gru o transformer."""
     if tipo == "gru":
-        return modelos.construir_gru(num_pasos, num_rasgos)
+        return modelos.construir_gru(num_pasos, num_rasgos, num_signos)
     if tipo == "transformer":
-        return modelos.construir_transformer(num_pasos, num_rasgos)
+        return modelos.construir_transformer(num_pasos, num_rasgos, num_signos)
     raise ValueError(f"Modelo desconocido: {tipo}")
 
 
@@ -79,7 +79,8 @@ def main():
             "dropout": 0.3,
         })
 
-        modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2])
+        num_signos = int(y_train.max()) + 1
+        modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2], num_signos)
         parada = keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=15, restore_best_weights=True)
 
         historia = modelo.fit(

@@ -25,16 +25,17 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from tensorflow import keras
 
-NUM_SIGNOS = 53
-RUTA_MODELO = "models/transformer_aumento3.keras"
+RUTA_MODELO = "models/transformer_45conceptos.keras"
 RUTA_GRAFICO = "/Users/daniel/Documents/GitHub/master/diario-proyecto-lse/matriz-confusion.png"
 
 
 def cargar_nombres():
+    """Devuelve la lista de nombres de concepto, indexada por el numero interno del modelo."""
     vocab = json.loads(Path("vocabulario.json").read_text())
-    nombres = [""] * NUM_SIGNOS
+    num_signos = max(v["indice_modelo"] for v in vocab) + 1
+    nombres = [""] * num_signos
     for v in vocab:
-        nombres[v["indice_modelo"]] = v["nombre"]
+        nombres[v["indice_modelo"]] = v["nombre_grupo"]
     return nombres
 
 
@@ -46,6 +47,7 @@ def cargar_grupo(grupo):
 
 def main():
     nombres = cargar_nombres()
+    num_signos = len(nombres)
 
     Xv, yv = cargar_grupo("val")
     Xt, yt = cargar_grupo("test")
@@ -60,7 +62,7 @@ def main():
     print(f"Acierto en este conjunto de diagnostico: {100*aciertos/len(y):.1f}%")
     print()
 
-    cm = confusion_matrix(y, predicho, labels=range(NUM_SIGNOS))
+    cm = confusion_matrix(y, predicho, labels=range(num_signos))
     ejemplos_por_signo = cm.sum(axis=1)
     acierto_por_signo = np.divide(cm.diagonal(), ejemplos_por_signo, where=ejemplos_por_signo > 0)
 
@@ -80,8 +82,8 @@ def main():
     print()
     print("=== Pares de signos que mas se confunden ===")
     pares = []
-    for real in range(NUM_SIGNOS):
-        for pred in range(NUM_SIGNOS):
+    for real in range(num_signos):
+        for pred in range(num_signos):
             if real != pred and cm[real, pred] > 0:
                 pares.append((cm[real, pred], nombres[real], nombres[pred]))
     pares.sort(reverse=True)

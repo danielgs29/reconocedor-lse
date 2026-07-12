@@ -14,23 +14,21 @@ En los dos casos, los fotogramas de relleno, que son todo ceros, se ignoran.
 import keras
 from keras import layers, ops
 
-NUM_SIGNOS = 53
 
-
-def construir_gru(num_pasos, num_rasgos):
+def construir_gru(num_pasos, num_rasgos, num_signos):
     """Modelo de secuencia GRU."""
     modelo = keras.Sequential([
         keras.Input(shape=(num_pasos, num_rasgos)),
         layers.Masking(mask_value=0.0),
         layers.GRU(64),
         layers.Dropout(0.3),
-        layers.Dense(NUM_SIGNOS, activation="softmax"),
+        layers.Dense(num_signos, activation="softmax"),
     ])
     modelo.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     return modelo
 
 
-def construir_transformer(num_pasos, num_rasgos, dimension=64, cabezas=4, oculta=128, bloques=2, dropout=0.3):
+def construir_transformer(num_pasos, num_rasgos, num_signos, dimension=64, cabezas=4, oculta=128, bloques=2, dropout=0.3):
     """Modelo Transformer con atencion, que ignora los fotogramas de relleno."""
     entradas = keras.Input(shape=(num_pasos, num_rasgos))
 
@@ -59,7 +57,7 @@ def construir_transformer(num_pasos, num_rasgos, dimension=64, cabezas=4, oculta
     x = ops.sum(x * peso, axis=1) / ops.maximum(ops.sum(peso, axis=1), 1.0)
 
     x = layers.Dropout(dropout)(x)
-    salidas = layers.Dense(NUM_SIGNOS, activation="softmax")(x)
+    salidas = layers.Dense(num_signos, activation="softmax")(x)
 
     modelo = keras.Model(entradas, salidas)
     modelo.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
