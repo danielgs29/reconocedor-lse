@@ -19,11 +19,10 @@ from pathlib import Path
 import mlflow
 import numpy as np
 from tensorflow import keras
-from tensorflow.keras import layers
 
 import aumento
+import modelos
 
-NUM_SIGNOS = 53
 SEMILLA = 42
 CARPETA_DATOS = Path("data/processed")
 CARPETA_MODELOS = Path("models")
@@ -43,22 +42,19 @@ def aplanar(X):
     return X.reshape(n, fotogramas, puntos * coords)
 
 
-def construir_modelo(num_pasos, num_rasgos):
-    """Modelo de secuencia GRU, el mismo del baseline."""
-    modelo = keras.Sequential([
-        keras.Input(shape=(num_pasos, num_rasgos)),
-        layers.Masking(mask_value=0.0),
-        layers.GRU(64),
-        layers.Dropout(0.3),
-        layers.Dense(NUM_SIGNOS, activation="softmax"),
-    ])
-    modelo.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-    return modelo
+def crear_modelo(tipo, num_pasos, num_rasgos):
+    """Crea el modelo elegido: gru o transformer."""
+    if tipo == "gru":
+        return modelos.construir_gru(num_pasos, num_rasgos)
+    if tipo == "transformer":
+        return modelos.construir_transformer(num_pasos, num_rasgos)
+    raise ValueError(f"Modelo desconocido: {tipo}")
 
 
 def main():
     analizador = argparse.ArgumentParser()
     analizador.add_argument("--nombre", required=True, help="nombre de la ejecucion")
+    analizador.add_argument("--modelo", default="gru", choices=["gru", "transformer"], help="tipo de modelo")
     analizador.add_argument("--aumento", type=int, default=0, help="copias variadas por grabacion")
     args = analizador.parse_args()
 
@@ -77,13 +73,13 @@ def main():
     mlflow.set_experiment(EXPERIMENTO)
     with mlflow.start_run(run_name=args.nombre):
         mlflow.log_params({
-            "modelo": "gru64",
+            "modelo": args.modelo,
             "copias_aumento": args.aumento,
             "tamano_lote": 32,
             "dropout": 0.3,
         })
 
-        modelo = construir_modelo(X_train.shape[1], X_train.shape[2])
+        modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2])
         parada = keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=15, restore_best_weights=True)
 
         historia = modelo.fit(
