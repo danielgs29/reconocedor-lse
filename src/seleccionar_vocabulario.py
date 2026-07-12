@@ -10,12 +10,13 @@ Cada concepto recibe un numero interno correlativo, del 0 en adelante, que es el
 el modelo. Varias variantes pueden compartir el mismo numero interno.
 """
 
+import argparse
 import json
 import re
 from collections import Counter, OrderedDict
 from pathlib import Path
 
-MINIMO_EJEMPLOS = 40
+MINIMO_EJEMPLOS_POR_DEFECTO = 40
 
 CARPETA_ANNS = Path("data/raw/annotations/ANNOTATIONS")
 RUTA_NOMBRES = Path("data/raw/videos_ref_annotations.csv")
@@ -46,12 +47,17 @@ def concepto_base(nombre):
 
 
 def main():
+    analizador = argparse.ArgumentParser()
+    analizador.add_argument("--minimo", type=int, default=MINIMO_EJEMPLOS_POR_DEFECTO,
+                            help="minimo de ejemplos para incluir un signo")
+    args = analizador.parse_args()
+
     todas = leer_etiquetas("train_labels.csv") + leer_etiquetas("val_labels.csv") + leer_etiquetas("test_labels.csv")
     ejemplos_por_signo = Counter(numero for _, numero in todas)
     nombres = leer_nombres()
 
     # Signos que superan el minimo de ejemplos, de mas a menos.
-    elegidos = [signo for signo, cuenta in ejemplos_por_signo.most_common() if cuenta >= MINIMO_EJEMPLOS]
+    elegidos = [signo for signo, cuenta in ejemplos_por_signo.most_common() if cuenta >= args.minimo]
 
     # Agrupar los elegidos por concepto base.
     grupos = OrderedDict()

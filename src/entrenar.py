@@ -46,11 +46,31 @@ def crear_modelo(tipo, num_pasos, num_rasgos, num_signos):
     raise ValueError(f"Modelo desconocido: {tipo}")
 
 
+def transferir_pesos(modelo, ruta_preentrenado):
+    """
+    Copia al modelo lo aprendido por un modelo preentrenado, capa por capa. Se copian todas
+    las capas cuyo tamano coincide, y se deja sin tocar la capa final, que cambia de tamano
+    al pasar de 300 signos a los conceptos de nuestro vocabulario.
+    """
+    preentrenado = keras.models.load_model(ruta_preentrenado)
+    copiadas = 0
+    for capa_nueva, capa_previa in zip(modelo.layers, preentrenado.layers):
+        pesos_nuevos = capa_nueva.get_weights()
+        pesos_previos = capa_previa.get_weights()
+        if pesos_previos and len(pesos_nuevos) == len(pesos_previos) and all(
+            a.shape == b.shape for a, b in zip(pesos_nuevos, pesos_previos)
+        ):
+            capa_nueva.set_weights(pesos_previos)
+            copiadas += 1
+    print(f"Capas transferidas desde el modelo preentrenado: {copiadas}")
+
+
 def main():
     analizador = argparse.ArgumentParser()
     analizador.add_argument("--nombre", required=True, help="nombre de la ejecucion")
     analizador.add_argument("--modelo", default="gru", choices=["gru", "transformer"], help="tipo de modelo")
     analizador.add_argument("--aumento", type=int, default=0, help="copias variadas por grabacion")
+    analizador.add_argument("--preentrenado", default=None, help="ruta a un modelo preentrenado del que partir")
     args = analizador.parse_args()
 
     keras.utils.set_random_seed(SEMILLA)
@@ -76,10 +96,13 @@ def main():
             "copias_aumento": args.aumento,
             "tamano_lote": 32,
             "dropout": 0.3,
+            "preentrenado": bool(args.preentrenado),
         })
 
         num_signos = int(y_train.max()) + 1
         modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2], num_signos)
+        if args.preentrenado:
+            transferir_pesos(modelo, args.preentrenado)
         parada = keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=15, restore_best_weights=True)
 
         historia = modelo.fit(
