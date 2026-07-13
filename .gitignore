@@ -21,10 +21,12 @@ checkpoints/
 *.tflite
 *.keras
 saved_model/
-# excepción: el modelo exportado para la web app SÍ se versiona
+# excepción: el modelo y los vídeos de referencia de la web app SÍ se versionan
 !web/**/model.json
 !web/**/*.bin
 !web/modelo.tflite
+!web/referencias/
+!web/referencias/*.mp4
 
 # ---- Python ----
 __pycache__/

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reconocedor de Lengua de Signos Española</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      background: #0f1115;
+      color: #e8eaed;
+    }
+    h1 { font-size: 1.25rem; font-weight: 600; text-align: center; margin: 0.5rem 0; }
+    #contenedor {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 4 / 3;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+    /* El video se oculta; dibujamos todo sobre el lienzo. */
+    #video { display: none; }
+    #lienzo { width: 100%; height: 100%; display: block; }
+    #estado {
+      font-size: 0.95rem;
+      text-align: center;
+      min-height: 1.4rem;
+      color: #9aa0a6;
+    }
+    .aviso { max-width: 640px; text-align: center; color: #9aa0a6; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>Reconocedor de Lengua de Signos Española</h1>
+
+  <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <label for="selector">Signo a practicar:</label>
+    <select id="selector" style="font-size:1rem; padding:0.4rem; border-radius:8px;"></select>
+  </div>
+
+  <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; width:100%;">
+    <div style="flex:1; min-width:280px; max-width:640px;">
+      <div style="font-size:0.85rem; color:#9aa0a6; margin-bottom:0.3rem;">Cómo se hace</div>
+      <video id="referencia" playsinline muted loop autoplay
+             style="width:100%; border-radius:12px; background:#000; aspect-ratio:4/3;"></video>
+    </div>
+    <div id="contenedor" style="flex:1; min-width:280px;">
+      <video id="video" playsinline></video>
+      <canvas id="lienzo" width="640" height="480"></canvas>
+    </div>
+  </div>
+
+  <div id="estado">Cargando…</div>
+
+  <button id="grabar" disabled style="
+    font-size: 1.05rem; padding: 0.7rem 1.4rem; border-radius: 999px; border: none;
+    background: #5b8def; color: #fff; cursor: pointer; font-weight: 600;">
+    Grabar signo
+  </button>
+
+  <div id="resultado" style="font-size: 1.6rem; font-weight: 700; min-height: 2rem; text-align: center;"></div>
+
+  <p class="aviso">
+    Permite el acceso a la cámara. Pulsa "Grabar signo", haz un signo frente a la cámara
+    durante un par de segundos, y la aplicación intentará reconocerlo.
+  </p>
+
+  <!-- MediaPipe Holistic, la misma versión con la que se prepararon los datos -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

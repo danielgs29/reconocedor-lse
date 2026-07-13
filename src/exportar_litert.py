@@ -24,17 +24,28 @@ RUTA_SALIDA = Path("web/modelo.tflite")
 
 
 def convertir(modelo):
-    """Convierte el modelo a .tflite, con un plan alternativo si hicieran falta mas operaciones."""
+    """
+    Convierte el modelo a .tflite con un tamano de entrada fijo de una grabacion.
+
+    Fijar el tamano es necesario porque LiteRT en el navegador no admite tamanos dinamicos.
+    Para ello envolvemos el modelo en una funcion con una forma de entrada concreta.
+    """
+    # Reconstruimos el modelo con el tamano de entrada fijo a una grabacion, reutilizando
+    # las mismas capas y pesos ya entrenados.
+    _, pasos, rasgos = modelo.input_shape
+    entrada = tf.keras.Input(batch_shape=(1, pasos, rasgos))
+    modelo_fijo = tf.keras.Model(entrada, modelo(entrada))
+
     try:
-        conversor = tf.lite.TFLiteConverter.from_keras_model(modelo)
-        return conversor.convert(), "operaciones nativas de LiteRT"
+        conversor = tf.lite.TFLiteConverter.from_keras_model(modelo_fijo)
+        return conversor.convert(), "operaciones nativas de LiteRT, tamaño fijo"
     except Exception:
-        conversor = tf.lite.TFLiteConverter.from_keras_model(modelo)
+        conversor = tf.lite.TFLiteConverter.from_keras_model(modelo_fijo)
         conversor.target_spec.supported_ops = [
             tf.lite.OpsSet.TFLITE_BUILTINS,
             tf.lite.OpsSet.SELECT_TF_OPS,
         ]
-        return conversor.convert(), "operaciones nativas + extra de TensorFlow"
+        return conversor.convert(), "operaciones nativas + extra de TensorFlow, tamaño fijo"
 
 
 def comprobar(ruta_tflite):
