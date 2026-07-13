@@ -12,6 +12,7 @@ import os
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
+import argparse
 from pathlib import Path
 
 import numpy as np
@@ -26,13 +27,18 @@ CARPETA_MODELOS = Path("models")
 
 
 def main():
+    analizador = argparse.ArgumentParser()
+    analizador.add_argument("--entrada", default="pre", help="prefijo de los datos, por ejemplo pre o lsa")
+    analizador.add_argument("--salida", default="preentrenado_300.keras", help="nombre del modelo resultante")
+    args = analizador.parse_args()
+
     keras.utils.set_random_seed(SEMILLA)
     CARPETA_MODELOS.mkdir(parents=True, exist_ok=True)
 
-    X_train = np.load(CARPETA_DATOS / "X_pre_train.npy")
-    y_train = np.load(CARPETA_DATOS / "y_pre_train.npy")
-    X_val = np.load(CARPETA_DATOS / "X_pre_val.npy")
-    y_val = np.load(CARPETA_DATOS / "y_pre_val.npy")
+    X_train = np.load(CARPETA_DATOS / f"X_{args.entrada}_train.npy")
+    y_train = np.load(CARPETA_DATOS / f"y_{args.entrada}_train.npy")
+    X_val = np.load(CARPETA_DATOS / f"X_{args.entrada}_val.npy")
+    y_val = np.load(CARPETA_DATOS / f"y_{args.entrada}_val.npy")
 
     X_train = caracteristicas.a_entrada_modelo(X_train)
     X_val = caracteristicas.a_entrada_modelo(X_val)
@@ -49,7 +55,7 @@ def main():
         epochs=100, batch_size=32, callbacks=[parada], verbose=2,
     )
 
-    ruta = CARPETA_MODELOS / "preentrenado_300.keras"
+    ruta = CARPETA_MODELOS / args.salida
     modelo.save(ruta)
     print(f"Modelo preentrenado guardado en {ruta}")
 
