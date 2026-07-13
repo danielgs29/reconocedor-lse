@@ -14,7 +14,7 @@ flowchart TD
     A["Webcam del usuario<br/>navegador móvil o escritorio"] --> B["MediaPipe Tasks JS<br/>extracción de landmarks"]
     B --> C["Keypoints por frame<br/>pose y 2 manos"]
     C --> D["Buffer de secuencia<br/>ventana deslizante y normalización"]
-    D --> E["Modelo temporal<br/>TensorFlow.js en el navegador"]
+    D --> E["Modelo temporal<br/>LiteRT.js en el navegador"]
     E --> F{"Predicción de signo y confianza"}
     F -->|"confianza suficiente"| G["Modo aprendizaje<br/>coincide con el objetivo"]
     F -->|"confianza suficiente"| H["Modo comunicación<br/>signo a texto"]
@@ -46,7 +46,7 @@ flowchart LR
     F --> G["Tracking MLflow<br/>experimentos y métricas"]
     G --> H["Eval suite<br/>top-1, top-5, per-signer, matriz confusión"]
     H --> I["Modelo v1 congelado"]
-    I --> J["Export a TensorFlow.js"]
+    I --> J["Export a .tflite (LiteRT.js)"]
 
     style D fill:#FF8B00,color:#fff
     style I fill:#36B37E,color:#fff
@@ -58,9 +58,15 @@ modelo ya fijado, marcado en verde, es el único que pasa a la aplicación.
 
 ## Decisión 1. El modelo se ejecuta en el navegador, no en un servidor
 
-Qué se decidió. El modelo funciona dentro del navegador de la persona con TensorFlow.js,
-que es la versión de TensorFlow para páginas web. La aplicación son solo archivos que se
-sirven como una web normal.
+Qué se decidió. El modelo funciona dentro del navegador de la persona con LiteRT.js, el
+motor de Google para ejecutar modelos en la web, sucesor de TensorFlow.js y publicado en
+julio de 2026. El modelo se convierte al formato .tflite, que es el que ejecuta LiteRT.js.
+La aplicación son solo archivos que se sirven como una web normal.
+
+Nota sobre la elección. Se valoró TensorFlow.js, más veterano, pero LiteRT.js es más rápido
+y su conversión va incluida en TensorFlow, sin dependencias extra. Se comprobó que el modelo
+convierte a .tflite usando solo operaciones nativas y da predicciones idénticas al original.
+Si la conversión hubiera fallado, el plan alternativo era TensorFlow.js.
 
 Otras opciones que se valoraron. Poner el modelo en un servidor y que la aplicación le
 mande la información por internet para recibir la respuesta. También usar servicios de

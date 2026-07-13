@@ -21,9 +21,10 @@ checkpoints/
 *.tflite
 *.keras
 saved_model/
-# excepción: el modelo exportado a TF.js para la web app SÍ se versiona
+# excepción: el modelo exportado para la web app SÍ se versiona
 !web/**/model.json
 !web/**/*.bin
+!web/modelo.tflite
 
 # ---- Python ----
 __pycache__/
