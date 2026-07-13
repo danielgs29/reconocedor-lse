@@ -92,233 +92,247 @@
   },
   {
     "indice_modelo": 5,
-    "nombre_grupo": "DOLOR",
-    "numero_signo_original": 110,
-    "nombre_original": "DOLOR",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 6,
-    "nombre_grupo": "COMER",
-    "numero_signo_original": 81,
-    "nombre_original": "COMER",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 7,
-    "nombre_grupo": "ESTRES",
-    "numero_signo_original": 142,
-    "nombre_original": "ESTRES",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 8,
-    "nombre_grupo": "CANSADO",
-    "numero_signo_original": 67,
-    "nombre_original": "CANSADO2",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 9,
-    "nombre_grupo": "ANSIEDAD",
-    "numero_signo_original": 30,
-    "nombre_original": "ANSIEDAD",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 10,
-    "nombre_grupo": "EMBARAZO",
-    "numero_signo_original": 125,
-    "nombre_original": "EMBARAZO",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 11,
-    "nombre_grupo": "DIABETES",
-    "numero_signo_original": 105,
-    "nombre_original": "DIABETES",
-    "ejemplos": 54
-  },
-  {
-    "indice_modelo": 12,
-    "nombre_grupo": "DORMIR",
-    "numero_signo_original": 112,
-    "nombre_original": "DORMIR",
-    "ejemplos": 53
-  },
-  {
-    "indice_modelo": 13,
-    "nombre_grupo": "ENFERMO",
-    "numero_signo_original": 130,
-    "nombre_original": "ENFERMO",
-    "ejemplos": 53
-  },
-  {
-    "indice_modelo": 14,
-    "nombre_grupo": "DEBIL",
-    "numero_signo_original": 100,
-    "nombre_original": "DEBIL",
-    "ejemplos": 53
-  },
-  {
-    "indice_modelo": 15,
-    "nombre_grupo": "PROBAR",
-    "numero_signo_original": 235,
-    "nombre_original": "PROBAR",
-    "ejemplos": 53
-  },
-  {
-    "indice_modelo": 16,
-    "nombre_grupo": "CANCER",
-    "numero_signo_original": 66,
-    "nombre_original": "CANCER",
-    "ejemplos": 53
-  },
-  {
-    "indice_modelo": 17,
     "nombre_grupo": "CURAR",
     "numero_signo_original": 98,
     "nombre_original": "CURAR",
     "ejemplos": 53
   },
   {
+    "indice_modelo": 5,
+    "nombre_grupo": "CURAR",
+    "numero_signo_original": 99,
+    "nombre_original": "CURAR2",
+    "ejemplos": 38
+  },
+  {
+    "indice_modelo": 6,
+    "nombre_grupo": "OPERAR",
+    "numero_signo_original": 218,
+    "nombre_original": "OPERAR",
+    "ejemplos": 43
+  },
+  {
+    "indice_modelo": 6,
+    "nombre_grupo": "OPERAR",
+    "numero_signo_original": 219,
+    "nombre_original": "OPERAR(M-DE)",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 7,
+    "nombre_grupo": "DOLOR",
+    "numero_signo_original": 110,
+    "nombre_original": "DOLOR",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 8,
+    "nombre_grupo": "COMER",
+    "numero_signo_original": 81,
+    "nombre_original": "COMER",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 9,
+    "nombre_grupo": "ESTRES",
+    "numero_signo_original": 142,
+    "nombre_original": "ESTRES",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 10,
+    "nombre_grupo": "CANSADO",
+    "numero_signo_original": 67,
+    "nombre_original": "CANSADO2",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 11,
+    "nombre_grupo": "ANSIEDAD",
+    "numero_signo_original": 30,
+    "nombre_original": "ANSIEDAD",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 12,
+    "nombre_grupo": "EMBARAZO",
+    "numero_signo_original": 125,
+    "nombre_original": "EMBARAZO",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 13,
+    "nombre_grupo": "DIABETES",
+    "numero_signo_original": 105,
+    "nombre_original": "DIABETES",
+    "ejemplos": 54
+  },
+  {
+    "indice_modelo": 14,
+    "nombre_grupo": "DORMIR",
+    "numero_signo_original": 112,
+    "nombre_original": "DORMIR",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 15,
+    "nombre_grupo": "ENFERMO",
+    "numero_signo_original": 130,
+    "nombre_original": "ENFERMO",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 16,
+    "nombre_grupo": "DEBIL",
+    "numero_signo_original": 100,
+    "nombre_original": "DEBIL",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 17,
+    "nombre_grupo": "PROBAR",
+    "numero_signo_original": 235,
+    "nombre_original": "PROBAR",
+    "ejemplos": 53
+  },
+  {
     "indice_modelo": 18,
+    "nombre_grupo": "CANCER",
+    "numero_signo_original": 66,
+    "nombre_original": "CANCER",
+    "ejemplos": 53
+  },
+  {
+    "indice_modelo": 19,
     "nombre_grupo": "DROGA",
     "numero_signo_original": 114,
     "nombre_original": "DROGA",
     "ejemplos": 53
   },
   {
-    "indice_modelo": 19,
+    "indice_modelo": 20,
     "nombre_grupo": "VER^PROBAR",
     "numero_signo_original": 293,
     "nombre_original": "VER^PROBAR",
     "ejemplos": 53
   },
   {
-    "indice_modelo": 20,
+    "indice_modelo": 21,
     "nombre_grupo": "ANALISIS-DE-SANGRE",
     "numero_signo_original": 25,
     "nombre_original": "ANALISIS-DE-SANGRE",
     "ejemplos": 52
   },
   {
-    "indice_modelo": 21,
+    "indice_modelo": 22,
     "nombre_grupo": "AGOTAMIENTO",
     "numero_signo_original": 10,
     "nombre_original": "AGOTAMIENTO",
     "ejemplos": 52
   },
   {
-    "indice_modelo": 22,
+    "indice_modelo": 23,
     "nombre_grupo": "PIEL^CUERPO",
     "numero_signo_original": 226,
     "nombre_original": "PIEL^CUERPO",
     "ejemplos": 51
   },
   {
-    "indice_modelo": 23,
+    "indice_modelo": 24,
     "nombre_grupo": "DEPRESION",
     "numero_signo_original": 101,
     "nombre_original": "DEPRESION",
     "ejemplos": 51
   },
   {
-    "indice_modelo": 24,
+    "indice_modelo": 25,
     "nombre_grupo": "CUIDAR",
     "numero_signo_original": 97,
     "nombre_original": "CUIDAR",
     "ejemplos": 50
   },
   {
-    "indice_modelo": 25,
+    "indice_modelo": 26,
     "nombre_grupo": "ACONSEJAR",
     "numero_signo_original": 5,
     "nombre_original": "ACONSEJAR",
     "ejemplos": 49
   },
   {
-    "indice_modelo": 26,
+    "indice_modelo": 27,
     "nombre_grupo": "HOSPITAL",
     "numero_signo_original": 170,
     "nombre_original": "HOSPITAL",
     "ejemplos": 48
   },
   {
-    "indice_modelo": 27,
+    "indice_modelo": 28,
     "nombre_grupo": "HAMBRE",
     "numero_signo_original": 163,
     "nombre_original": "HAMBRE",
     "ejemplos": 48
   },
   {
-    "indice_modelo": 28,
+    "indice_modelo": 29,
     "nombre_grupo": "NACER",
     "numero_signo_original": 209,
     "nombre_original": "NACER",
     "ejemplos": 47
   },
   {
-    "indice_modelo": 29,
+    "indice_modelo": 30,
     "nombre_grupo": "OIR^MITAD",
     "numero_signo_original": 215,
     "nombre_original": "OIR^MITAD",
     "ejemplos": 47
   },
   {
-    "indice_modelo": 30,
+    "indice_modelo": 31,
     "nombre_grupo": "ALCOHOL",
     "numero_signo_original": 12,
     "nombre_original": "ALCOHOL",
     "ejemplos": 46
   },
   {
-    "indice_modelo": 31,
+    "indice_modelo": 32,
     "nombre_grupo": "GARGANTA",
     "numero_signo_original": 152,
     "nombre_original": "GARGANTA2",
     "ejemplos": 46
   },
   {
-    "indice_modelo": 32,
+    "indice_modelo": 33,
     "nombre_grupo": "GANA",
     "numero_signo_original": 150,
     "nombre_original": "GANA",
     "ejemplos": 45
   },
   {
-    "indice_modelo": 33,
+    "indice_modelo": 34,
     "nombre_grupo": "FARMACIA",
     "numero_signo_original": 146,
     "nombre_original": "FARMACIA",
     "ejemplos": 45
   },
   {
-    "indice_modelo": 34,
+    "indice_modelo": 35,
     "nombre_grupo": "CENTRO^VIVIR",
     "numero_signo_original": 70,
     "nombre_original": "CENTRO^VIVIR",
     "ejemplos": 45
   },
   {
-    "indice_modelo": 35,
+    "indice_modelo": 36,
     "nombre_grupo": "ARTERIA",
     "numero_signo_original": 37,
     "nombre_original": "ARTERIA2",
     "ejemplos": 44
   },
   {
-    "indice_modelo": 36,
+    "indice_modelo": 37,
     "nombre_grupo": "GORDO",
     "numero_signo_original": 153,
     "nombre_original": "GORDO",
-    "ejemplos": 43
-  },
-  {
-    "indice_modelo": 37,
-    "nombre_grupo": "OPERAR",
-    "numero_signo_original": 218,
-    "nombre_original": "OPERAR",
     "ejemplos": 43
   },
   {
@@ -369,5 +383,138 @@
     "numero_signo_original": 144,
     "nombre_original": "EVITAR",
     "ejemplos": 40
+  },
+  {
+    "indice_modelo": 45,
+    "nombre_grupo": "MENTE^CEREBRO",
+    "numero_signo_original": 197,
+    "nombre_original": "MENTE^CEREBRO",
+    "ejemplos": 39
+  },
+  {
+    "indice_modelo": 46,
+    "nombre_grupo": "ENFERMO^CASA",
+    "numero_signo_original": 131,
+    "nombre_original": "ENFERMO^CASA(M-AB)",
+    "ejemplos": 39
+  },
+  {
+    "indice_modelo": 47,
+    "nombre_grupo": "CORAZON",
+    "numero_signo_original": 89,
+    "nombre_original": "CORAZON",
+    "ejemplos": 38
+  },
+  {
+    "indice_modelo": 48,
+    "nombre_grupo": "APENDICE",
+    "numero_signo_original": 32,
+    "nombre_original": "APENDICE",
+    "ejemplos": 38
+  },
+  {
+    "indice_modelo": 49,
+    "nombre_grupo": "DOLOR-DE-CABEZA",
+    "numero_signo_original": 111,
+    "nombre_original": "DOLOR-DE-CABEZA",
+    "ejemplos": 37
+  },
+  {
+    "indice_modelo": 50,
+    "nombre_grupo": "AUXILIAR",
+    "numero_signo_original": 43,
+    "nombre_original": "AUXILIAR",
+    "ejemplos": 37
+  },
+  {
+    "indice_modelo": 51,
+    "nombre_grupo": "ALTA",
+    "numero_signo_original": 18,
+    "nombre_original": "ALTA(MP)",
+    "ejemplos": 37
+  },
+  {
+    "indice_modelo": 52,
+    "nombre_grupo": "FUMAR",
+    "numero_signo_original": 149,
+    "nombre_original": "FUMAR",
+    "ejemplos": 37
+  },
+  {
+    "indice_modelo": 53,
+    "nombre_grupo": "RELAJAR",
+    "numero_signo_original": 246,
+    "nombre_original": "RELAJAR",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 54,
+    "nombre_grupo": "URGENTE",
+    "numero_signo_original": 281,
+    "nombre_original": "URGENTE",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 55,
+    "nombre_grupo": "INSOMNIO",
+    "numero_signo_original": 175,
+    "nombre_original": "INSOMNIO",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 56,
+    "nombre_grupo": "CONTRA",
+    "numero_signo_original": 85,
+    "nombre_original": "CONTRA",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 57,
+    "nombre_grupo": "DIARREA",
+    "numero_signo_original": 107,
+    "nombre_original": "DIARREA2",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 58,
+    "nombre_grupo": "ADELGAZAR",
+    "numero_signo_original": 7,
+    "nombre_original": "ADELGAZAR",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 59,
+    "nombre_grupo": "PULMON",
+    "numero_signo_original": 237,
+    "nombre_original": "PULMON",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 60,
+    "nombre_grupo": "CITA",
+    "numero_signo_original": 75,
+    "nombre_original": "CITA",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 61,
+    "nombre_grupo": "COMER^SIN",
+    "numero_signo_original": 83,
+    "nombre_original": "COMER^SIN",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 62,
+    "nombre_grupo": "CONTROL",
+    "numero_signo_original": 87,
+    "nombre_original": "CONTROL",
+    "ejemplos": 36
+  },
+  {
+    "indice_modelo": 63,
+    "nombre_grupo": "APETECER",
+    "numero_signo_original": 33,
+    "nombre_original": "APETECER",
+    "ejemplos": 35
   }
 ]

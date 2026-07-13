@@ -37,12 +37,12 @@ def cargar(grupo):
     return X, y
 
 
-def crear_modelo(tipo, num_pasos, num_rasgos, num_signos):
+def crear_modelo(tipo, num_pasos, num_rasgos, num_signos, dimension=64, bloques=2):
     """Crea el modelo elegido: gru o transformer."""
     if tipo == "gru":
         return modelos.construir_gru(num_pasos, num_rasgos, num_signos)
     if tipo == "transformer":
-        return modelos.construir_transformer(num_pasos, num_rasgos, num_signos)
+        return modelos.construir_transformer(num_pasos, num_rasgos, num_signos, dimension=dimension, bloques=bloques)
     raise ValueError(f"Modelo desconocido: {tipo}")
 
 
@@ -71,6 +71,8 @@ def main():
     analizador.add_argument("--modelo", default="gru", choices=["gru", "transformer"], help="tipo de modelo")
     analizador.add_argument("--aumento", type=int, default=0, help="copias variadas por grabacion")
     analizador.add_argument("--preentrenado", default=None, help="ruta a un modelo preentrenado del que partir")
+    analizador.add_argument("--dimension", type=int, default=64, help="tamano interno del transformer")
+    analizador.add_argument("--bloques", type=int, default=2, help="numero de bloques de atencion")
     args = analizador.parse_args()
 
     keras.utils.set_random_seed(SEMILLA)
@@ -97,10 +99,12 @@ def main():
             "tamano_lote": 32,
             "dropout": 0.3,
             "preentrenado": bool(args.preentrenado),
+            "dimension": args.dimension,
+            "bloques": args.bloques,
         })
 
         num_signos = int(y_train.max()) + 1
-        modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2], num_signos)
+        modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2], num_signos, args.dimension, args.bloques)
         if args.preentrenado:
             transferir_pesos(modelo, args.preentrenado)
         parada = keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=15, restore_best_weights=True)

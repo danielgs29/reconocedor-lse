@@ -27,7 +27,7 @@ from tensorflow import keras
 
 import caracteristicas
 
-RUTA_MODELO = "models/transformer_z_movimiento.keras"
+RUTA_MODELO = "models/transformer_64conceptos.keras"
 RUTA_GRAFICO = "/Users/daniel/Documents/GitHub/master/diario-proyecto-lse/matriz-confusion.png"
 
 
