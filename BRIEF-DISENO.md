@@ -22,19 +22,28 @@ de un vistazo.
 
 ---
 
-## 2. Funcionalidades y modos
+## 2. Estructura de modos y funcionalidades
 
-La aplicación tiene dos modos, elegibles con un interruptor arriba:
+Dos modos principales, elegibles con un interruptor arriba. Dentro de cada uno, un
+subinterruptor entre "Signos" y "Abecedario". En total, cuatro vistas:
 
-- **Aprender**: la persona elige un signo de una lista, ve un vídeo de cómo se hace, lo imita
-  frente a la cámara y la aplicación le dice si lo ha hecho bien (correcto / casi / no seguro).
-  Todo en español. Sin selector de idioma.
-- **Comunicar**: la persona signa libremente y cada signo reconocido se añade a un texto. Hay
-  un selector de idioma (Español / English) que cambia el idioma de ese texto, para que quien
-  no sepa signar pueda leer. Botón para signar y botón para borrar.
+**Aprender → Signos**: la persona elige un signo de una lista, ve un vídeo de cómo se hace,
+lo imita frente a la cámara y pulsa un botón para grabar; la aplicación le dice si lo ha
+hecho bien (correcto / casi / no seguro). En español.
 
-Ampliación prevista (aún no implementada, deja hueco en el diseño): un submodo **abecedario**
-dentro de cada modo, para practicar y deletrear letras con la mano.
+**Aprender → Abecedario**: elige una letra, ve una imagen de cómo se hace, y forma la letra
+con la mano; el reconocimiento es en vivo (por fotograma, sin botón) y muestra la letra que
+detecta; cuando coincide con la elegida, indica que es correcta.
+
+**Comunicar → Signos**: la persona signa (con botón) y cada signo reconocido se añade a un
+texto. Hay un selector de idioma (Español / English) que cambia el idioma de ese texto.
+Botón para borrar.
+
+**Comunicar → Abecedario**: la persona forma letras con la mano; el reconocimiento en vivo
+muestra la letra actual, y con botones va deletreando: "Añadir letra", "Espacio", "Borrar".
+
+Notas de alcance: el reconocedor de abecedario cubre 19 letras estáticas (faltan las que
+llevan movimiento). El selector de idioma solo aparece en Comunicar → Signos.
 
 ---
 
@@ -42,53 +51,66 @@ dentro de cada modo, para practicar y deletrear letras con la mano.
 
 La lógica está en `web/app.js` y usa estos elementos por su `id`. El rediseño puede cambiar
 por completo el aspecto, la maquetación y las clases de estilo, pero DEBE conservar estos
-`id` y estas dos clases que el código activa y desactiva.
+`id`, y las dos clases que el código activa y desactiva.
 
-Elementos por `id` que deben existir:
+**Generales**
+- `video` — `<video>` oculto (fuente de la cámara).
+- `lienzo` — `<canvas>` donde se dibuja la cámara y los puntos. Vista principal, relación 4:3.
+- `estado` — texto de estado. El código escribe su contenido.
 
-- `video` — elemento `<video>` (oculto, fuente de la cámara).
-- `lienzo` — `<canvas>` donde se dibuja la cámara y los puntos. Es la vista principal.
-- `estado` — texto de estado (cargando, grabando, etc.). El código escribe su contenido.
-- `tab-aprender`, `tab-comunicar` — los dos botones del interruptor de modo.
-- `panel-aprender`, `panel-comunicar` — los dos contenedores de cada modo.
-- `selector` — `<select>` de signo a practicar (modo Aprender). El código lo rellena.
-- `referencia` — `<video>` con la demostración del signo (modo Aprender).
-- `grabar-aprender` — botón para grabar el signo (modo Aprender).
-- `resultado-aprender` — donde se escribe el resultado. El código le pone el color inline.
-- `idioma` — `<select>` de idioma con opciones `value="es"` y `value="en"` (modo Comunicar).
-- `grabar-comunicar` — botón para signar (modo Comunicar).
-- `borrar` — botón para borrar el texto (modo Comunicar).
-- `mensaje` — contenedor del texto reconocido (modo Comunicar).
+**Interruptor de modo y paneles**
+- `tab-aprender`, `tab-comunicar` — botones del interruptor principal.
+- `panel-aprender`, `panel-comunicar` — contenedores de cada modo.
 
-Clases que el código activa/desactiva (deben existir en el CSS con ese nombre):
+**Modo Aprender**
+- `sub-apr-signos`, `sub-apr-abc` — subinterruptor Signos / Abecedario.
+- `apr-signos` — subpanel de signos. Contiene:
+  - `selector` — `<select>` de signo a practicar (el código lo rellena).
+  - `referencia` — `<video>` de demostración del signo.
+  - `grabar-aprender` — botón para grabar el signo.
+  - `resultado-aprender` — resultado (el código le pone el color inline).
+- `apr-abc` — subpanel de abecedario. Contiene:
+  - `selector-letra` — `<select>` de letra a practicar (el código lo rellena).
+  - `ref-letra` — `<img>` con la forma de la letra.
+  - `letra-viva-apr` — muestra la letra reconocida en vivo (el código escribe su texto).
+  - `resultado-letra` — resultado (el código le pone el color inline).
 
-- `activa` — se pone en el botón de modo activo. Estíla el estado seleccionado del interruptor.
-- `oculto` — se pone en el panel que no está visible. Debe ocultar el elemento (`display: none`).
+**Modo Comunicar**
+- `sub-com-signos`, `sub-com-abc` — subinterruptor Signos / Abecedario.
+- `com-signos` — subpanel de signos. Contiene:
+  - `idioma` — `<select>` con opciones `value="es"` y `value="en"`.
+  - `grabar-comunicar` — botón para signar.
+  - `borrar` — botón para borrar el texto.
+  - `mensaje` — contenedor del texto reconocido.
+- `com-abc` — subpanel de abecedario. Contiene:
+  - `letra-viva-com` — muestra la letra reconocida en vivo (el código escribe su texto).
+  - `mensaje-abc` — contenedor del texto deletreado.
+  - `anadir-letra`, `espacio`, `borrar-abc` — botones para deletrear.
 
-Otros contratos:
+**Clases que el código activa/desactiva (deben existir en el CSS con ese nombre)**
+- `activa` — se pone en el botón (de modo o de subinterruptor) que está activo.
+- `oculto` — se pone en el panel o subpanel que no está visible. Debe ocultar (`display: none`).
 
-- El `<canvas id="lienzo">` se redimensiona por código al tamaño del vídeo; su contenedor debe
-  poder mostrarlo completo (relación de aspecto 4:3).
-- El código escribe en `estado`, `resultado-aprender` y `mensaje` mediante texto; deja sitio
-  para textos de longitud variable.
-- Los `<script>` del final (MediaPipe y `app.js` como módulo) deben mantenerse tal cual.
+**Otros contratos**
+- El `<canvas id="lienzo">` se redimensiona por código al tamaño del vídeo; su contenedor
+  debe mostrarlo completo (4:3).
+- El código escribe texto en `estado`, `resultado-aprender`, `resultado-letra`, `mensaje`,
+  `mensaje-abc`, `letra-viva-apr`, `letra-viva-com`; deja sitio para textos variables.
+- Los `<script>` del final (MediaPipe y `app.js` como módulo) se mantienen tal cual.
 
 ---
 
 ## 4. Restricciones técnicas
 
 - **Es una web normal, NO un Artifact.** Usa la cámara, carga librerías externas por CDN
-  (MediaPipe y LiteRT.js) y un modelo local. El formato Artifact bloquea todo eso, así que no
-  se puede publicar como Artifact. El rediseño es un `index.html` autónomo que se sirve como
-  web estática.
-- Se puede usar CSS moderno y fuentes de Google por enlace (no hay CSP que lo impida).
-- **Tema claro y oscuro**: debe verse bien en los dos, con tokens de color y respetando
-  `prefers-color-scheme` y el atributo `data-theme` en la raíz.
-- **Responsive**: se usa mucho en móvil (la cámara del teléfono). La cámara debe ser grande y
-  cómoda; nada debe desbordar en horizontal.
-- **Accesibilidad**: buen contraste, foco de teclado visible, respetar
-  `prefers-reduced-motion`. Es una herramienta para personas sordas; la claridad visual es
-  prioritaria.
+  (MediaPipe y LiteRT.js) y modelos locales. El formato Artifact bloquea todo eso. El
+  rediseño es un `index.html` autónomo servido como web estática.
+- Se puede usar CSS moderno y fuentes de Google por enlace.
+- **Tema claro y oscuro** con tokens de color, respetando `prefers-color-scheme` y el atributo
+  `data-theme` en la raíz.
+- **Responsive**: se usa mucho en móvil; la cámara debe ser grande; nada desborda en horizontal.
+- **Accesibilidad**: buen contraste, foco de teclado visible, respetar `prefers-reduced-motion`.
+  Es una herramienta para personas sordas; la claridad visual es prioritaria.
 
 ---
 
@@ -96,34 +118,37 @@ Otros contratos:
 
 El diseño actual usa: acento turquesa (comunicación y claridad, ligado al color de los puntos
 de la mano), neutros fríos, tipografías Bricolage Grotesque para títulos y Onest para la
-interfaz. La cámara con esquinas redondeadas y una etiqueta de estado superpuesta.
+interfaz, cámara con esquinas redondeadas y etiqueta de estado superpuesta.
 
 Libertad para proponer una identidad mejor, siempre que:
-
 - Siga anclada al tema: manos, comunicación, accesibilidad, LSE.
 - Evite los looks genéricos de IA (crema con serif y terracota; gradiente morado-azul; verde
-  ácido sobre negro; todo centrado y con esquinas muy redondeadas por defecto).
+  ácido sobre negro; todo centrado y esquinas muy redondeadas por defecto).
 - Concentre la audacia en un sitio y mantenga el resto tranquilo.
-- Cuide los estados (grabando, acierto, error) con color y forma, no solo texto.
+- Cuide los estados (grabando, acierto, error, letra en vivo) con color y forma, no solo texto.
 
 ---
 
 ## 6. Archivos
 
 En la carpeta `web/`:
-
 - `index.html` — la página. Es lo que se rediseña.
-- `app.js` — lógica (no tocar salvo para acompañar cambios de `id`/clases; si se cambian, hay
-  que actualizarlo en consecuencia).
-- `modelo.js`, `preprocesado.js` — carga y ejecución del modelo. No tocar.
-- `modelo.tflite`, `vocabulario.json`, `referencias/` — modelo, nombres y vídeos. No tocar.
+- `app.js` — lógica. No tocar salvo para acompañar cambios de `id`/clases; si se cambian, hay
+  que actualizarlo en consecuencia.
+- `modelo.js`, `preprocesado.js` — carga y ejecución de los modelos. No tocar.
+- `modelo.tflite`, `abecedario.tflite` — modelos. No tocar.
+- `vocabulario.json` — nombres de los signos en español e inglés. No tocar.
+- `abecedario.json` — lista de letras. No tocar.
+- `referencias/` — vídeos de demostración de los signos. No tocar.
+- `abecedario_ref/` — imágenes de las letras. No tocar.
 
 ## 7. Cómo verlo en marcha
 
 Desde la carpeta del proyecto:
 
 ```
-python3 -m http.server 8000 --directory web
+python3 src/servidor.py
 ```
 
-Y abrir http://localhost:8000 en el navegador, permitiendo el acceso a la cámara.
+Y abrir http://localhost:8000, permitiendo el acceso a la cámara. El servidor no usa caché,
+así que los cambios se ven al recargar.
