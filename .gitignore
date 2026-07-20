@@ -60,3 +60,4 @@ build/
 .vscode/
 .idea/
 Thumbs.db
+!web/abecedario.tflite
