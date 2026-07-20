@@ -10,6 +10,8 @@ export const UMBRAL = 0.3;
 
 let modelo = null;
 let nombres = [];
+let modeloAbc = null;
+let letras = [];
 
 // Carga el motor, el modelo y la lista de nombres de los signos.
 export async function cargarModelo() {
@@ -50,4 +52,29 @@ export async function predecir(entrada) {
   }
   // Devuelve el numero de signo; la interfaz elige en que idioma mostrarlo.
   return { indice: mejor, confianza: calibradas[mejor] };
+}
+
+// Carga el reconocedor de abecedario (letras estaticas). El motor ya esta iniciado.
+export async function cargarAbecedario() {
+  try {
+    modeloAbc = await loadAndCompile("abecedario.tflite", { accelerator: "webgpu" });
+  } catch (error) {
+    modeloAbc = await loadAndCompile("abecedario.tflite", { accelerator: "wasm" });
+  }
+  letras = await (await fetch("abecedario.json")).json();
+  return letras;
+}
+
+// Reconoce la letra a partir de los puntos de la mano ya preparados.
+export async function predecirLetra(entrada) {
+  const tensor = Tensor.fromTypedArray(entrada, [1, entrada.length]);
+  const salidas = await modeloAbc.run([tensor]);
+  const probabilidades = await salidas[0].data();
+  tensor.delete();
+  salidas[0].delete();
+  let mejor = 0;
+  for (let i = 1; i < probabilidades.length; i++) {
+    if (probabilidades[i] > probabilidades[mejor]) mejor = i;
+  }
+  return { letra: letras[mejor], indice: mejor, confianza: probabilidades[mejor] };
 }

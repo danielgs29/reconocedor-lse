@@ -9,17 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Onest:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #eef1f1;
-      --surface: #ffffff;
-      --surface-2: #e6eaea;
-      --text: #15201f;
-      --muted: #5a6a68;
-      --border: #d7dedd;
-      --accent: #0c9c93;
-      --accent-ink: #ffffff;
-      --good: #2f9e44;
-      --warn: #db7f10;
-      --shadow: 0 1px 3px rgba(20, 40, 38, 0.08), 0 8px 24px rgba(20, 40, 38, 0.06);
+      --bg: #eef1f1; --surface: #ffffff; --surface-2: #e6eaea; --text: #15201f;
+      --muted: #5a6a68; --border: #d7dedd; --accent: #0c9c93; --accent-ink: #ffffff;
+      --good: #2f9e44; --warn: #db7f10;
+      --shadow: 0 1px 3px rgba(20,40,38,0.08), 0 8px 24px rgba(20,40,38,0.06);
       --font-display: "Bricolage Grotesque", system-ui, sans-serif;
       --font-body: "Onest", system-ui, -apple-system, sans-serif;
     }
@@ -32,16 +25,13 @@
       }
     }
     :root[data-theme="light"] {
-      --bg: #eef1f1; --surface: #ffffff; --surface-2: #e6eaea; --text: #15201f;
-      --muted: #5a6a68; --border: #d7dedd; --accent: #0c9c93; --accent-ink: #ffffff;
-      --good: #2f9e44; --warn: #db7f10;
+      --bg:#eef1f1; --surface:#fff; --surface-2:#e6eaea; --text:#15201f; --muted:#5a6a68;
+      --border:#d7dedd; --accent:#0c9c93; --accent-ink:#fff; --good:#2f9e44; --warn:#db7f10;
     }
     :root[data-theme="dark"] {
-      --bg: #0c1312; --surface: #131c1b; --surface-2: #1b2625; --text: #e9efee;
-      --muted: #90a09e; --border: #253230; --accent: #1cc3b8; --accent-ink: #052220;
-      --good: #46c96c; --warn: #eda43c;
+      --bg:#0c1312; --surface:#131c1b; --surface-2:#1b2625; --text:#e9efee; --muted:#90a09e;
+      --border:#253230; --accent:#1cc3b8; --accent-ink:#052220; --good:#46c96c; --warn:#eda43c;
     }
-
     * { box-sizing: border-box; }
     body {
       margin: 0; padding: 1.5rem 1rem 3rem; background: var(--bg); color: var(--text);
@@ -50,95 +40,54 @@
       -webkit-font-smoothing: antialiased;
     }
     .marco { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1.25rem; }
-
     header { text-align: center; }
-    .logo {
-      font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em;
-      margin: 0; text-wrap: balance;
-    }
+    .logo { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; margin: 0; }
     .logo span { color: var(--accent); }
     .sub { color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0; }
 
-    /* Interruptor de modo */
-    .modos {
-      display: flex; gap: 0.25rem; padding: 0.3rem; background: var(--surface-2);
-      border-radius: 999px; width: fit-content; margin: 0 auto;
-    }
-    .modos button {
-      font-family: var(--font-body); font-weight: 600; font-size: 0.95rem;
-      border: none; background: transparent; color: var(--muted);
-      padding: 0.55rem 1.4rem; border-radius: 999px; cursor: pointer; transition: all 0.18s;
-    }
+    .modos { display: flex; gap: 0.25rem; padding: 0.3rem; background: var(--surface-2); border-radius: 999px; width: fit-content; margin: 0 auto; }
+    .modos button { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--muted); padding: 0.55rem 1.4rem; border-radius: 999px; cursor: pointer; transition: all 0.18s; }
     .modos button.activa { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
 
-    /* Cámara protagonista */
-    #contenedor {
-      position: relative; width: 100%; aspect-ratio: 4 / 3;
-      border-radius: 20px; overflow: hidden; background: #000;
-      border: 1px solid var(--border); box-shadow: var(--shadow);
-    }
+    #contenedor { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--border); box-shadow: var(--shadow); }
     #video { display: none; }
     #lienzo { width: 100%; height: 100%; display: block; }
-    #estado {
-      position: absolute; top: 0.75rem; left: 0.75rem;
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.35rem 0.7rem; border-radius: 999px;
-      background: rgba(10, 20, 19, 0.62); color: #fff; backdrop-filter: blur(6px);
-      font-size: 0.8rem; font-weight: 500;
-    }
-    #estado::before {
-      content: ""; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
-    }
+    #estado { position: absolute; top: 0.75rem; left: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(10,20,19,0.62); color: #fff; backdrop-filter: blur(6px); font-size: 0.8rem; font-weight: 500; }
+    #estado::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
 
     .panel { display: flex; flex-direction: column; gap: 1rem; }
-    .oculto { display: none; }
+    .oculto { display: none !important; }
 
-    .tarjeta {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-      padding: 1.1rem; box-shadow: var(--shadow);
-    }
+    .subtabs { display: flex; gap: 0.4rem; justify-content: center; }
+    .subtabs button { font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; border: 1px solid var(--border); background: transparent; color: var(--muted); padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
+    .subtabs button.activa { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+    .tarjeta { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem; box-shadow: var(--shadow); }
     .fila { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
     label { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
     .etiqueta { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+    select { font-family: var(--font-body); font-size: 1rem; font-weight: 500; color: var(--text); padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; }
+    #referencia, #ref-letra { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4/3; margin-top: 0.5rem; border: 1px solid var(--border); object-fit: cover; }
 
-    select {
-      font-family: var(--font-body); font-size: 1rem; font-weight: 500; color: var(--text);
-      padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--surface-2); cursor: pointer;
-    }
-
-    #referencia {
-      width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4/3; margin-top: 0.5rem;
-      border: 1px solid var(--border);
-    }
-
-    button.accion {
-      font-family: var(--font-body); font-size: 1.05rem; font-weight: 600;
-      padding: 0.8rem 1.5rem; border-radius: 12px; border: none; cursor: pointer;
-      background: var(--accent); color: var(--accent-ink); transition: transform 0.1s, filter 0.15s;
-      width: 100%;
-    }
+    button.accion { font-family: var(--font-body); font-size: 1.05rem; font-weight: 600; padding: 0.8rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; background: var(--accent); color: var(--accent-ink); transition: transform 0.1s, filter 0.15s; width: 100%; }
     button.accion:hover:not(:disabled) { filter: brightness(1.06); }
     button.accion:active:not(:disabled) { transform: scale(0.98); }
     button.accion:disabled { opacity: 0.45; cursor: default; }
-    button.secundario { background: var(--surface-2); color: var(--text); width: auto; }
+    button.secundario { background: var(--surface-2); color: var(--text); }
     .botones { display: flex; gap: 0.6rem; }
     .botones .accion { flex: 1; }
 
-    #resultado-aprender { font-size: 1.5rem; font-weight: 700; min-height: 2rem; text-align: center; font-family: var(--font-display); }
+    #resultado-aprender, #resultado-letra { font-size: 1.5rem; font-weight: 700; min-height: 2rem; text-align: center; font-family: var(--font-display); }
 
-    #mensaje {
-      min-height: 3.5rem; padding: 1rem; border-radius: 12px; background: var(--surface-2);
-      font-size: 1.6rem; font-weight: 600; text-align: center; color: var(--text);
-      font-family: var(--font-display); word-break: break-word;
-    }
-    #mensaje:empty::before { content: "Tu mensaje aparecerá aquí"; color: var(--muted); font-weight: 400; font-size: 1rem; font-family: var(--font-body); }
+    .letra-viva { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 1rem; }
+    .letra-viva .letra { font-family: var(--font-display); font-weight: 700; font-size: 4rem; line-height: 1; color: var(--accent); }
+    .letra-viva .conf { font-size: 0.8rem; color: var(--muted); }
+
+    #mensaje, #mensaje-abc { min-height: 3.5rem; padding: 1rem; border-radius: 12px; background: var(--surface-2); font-size: 1.6rem; font-weight: 600; text-align: center; color: var(--text); font-family: var(--font-display); word-break: break-word; letter-spacing: 0.05em; }
+    #mensaje:empty::before, #mensaje-abc:empty::before { content: "Tu mensaje aparecerá aquí"; color: var(--muted); font-weight: 400; font-size: 1rem; font-family: var(--font-body); letter-spacing: normal; }
 
     .aviso { text-align: center; color: var(--muted); font-size: 0.85rem; margin: 0; }
-    button.accion:focus-visible, .modos button:focus-visible, select:focus-visible {
-      outline: 2px solid var(--accent); outline-offset: 2px;
-    }
+    button:focus-visible, .modos button:focus-visible, .subtabs button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
@@ -162,36 +111,81 @@
 
     <!-- MODO APRENDER -->
     <div id="panel-aprender" class="panel">
-      <div class="tarjeta">
-        <div class="fila">
-          <label for="selector">Signo a practicar</label>
-          <select id="selector"></select>
-        </div>
-        <div class="etiqueta" style="margin-top:0.9rem;">Cómo se hace</div>
-        <video id="referencia" playsinline muted loop autoplay></video>
+      <div class="subtabs">
+        <button id="sub-apr-signos" class="activa">Signos</button>
+        <button id="sub-apr-abc">Abecedario</button>
       </div>
-      <button id="grabar-aprender" class="accion" disabled>Grabar mi signo</button>
-      <div id="resultado-aprender"></div>
-      <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. Te diré si lo has hecho bien.</p>
+
+      <div id="apr-signos" class="panel">
+        <div class="tarjeta">
+          <div class="fila">
+            <label for="selector">Signo a practicar</label>
+            <select id="selector"></select>
+          </div>
+          <div class="etiqueta" style="margin-top:0.9rem;">Cómo se hace</div>
+          <video id="referencia" playsinline muted loop autoplay></video>
+        </div>
+        <button id="grabar-aprender" class="accion" disabled>Grabar mi signo</button>
+        <div id="resultado-aprender"></div>
+        <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. Te diré si lo has hecho bien.</p>
+      </div>
+
+      <div id="apr-abc" class="panel oculto">
+        <div class="tarjeta">
+          <div class="fila">
+            <label for="selector-letra">Letra a practicar</label>
+            <select id="selector-letra"></select>
+          </div>
+          <div class="etiqueta" style="margin-top:0.9rem;">Cómo se hace</div>
+          <img id="ref-letra" alt="Forma de la letra" />
+        </div>
+        <div class="tarjeta letra-viva">
+          <div class="etiqueta">Tu mano dice</div>
+          <div class="letra" id="letra-viva-apr">–</div>
+        </div>
+        <div id="resultado-letra"></div>
+        <p class="aviso">Haz la letra con la mano frente a la cámara. Se reconoce al momento; mantenla hasta que salga "Correcto".</p>
+      </div>
     </div>
 
     <!-- MODO COMUNICAR -->
     <div id="panel-comunicar" class="panel oculto">
-      <div class="tarjeta">
-        <div class="fila">
-          <label for="idioma">Mostrar significado en</label>
-          <select id="idioma">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-          </select>
+      <div class="subtabs">
+        <button id="sub-com-signos" class="activa">Signos</button>
+        <button id="sub-com-abc">Abecedario</button>
+      </div>
+
+      <div id="com-signos" class="panel">
+        <div class="tarjeta">
+          <div class="fila">
+            <label for="idioma">Mostrar significado en</label>
+            <select id="idioma">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </div>
         </div>
+        <div id="mensaje"></div>
+        <div class="botones">
+          <button id="grabar-comunicar" class="accion" disabled>Signar</button>
+          <button id="borrar" class="accion secundario">Borrar</button>
+        </div>
+        <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido.</p>
       </div>
-      <div id="mensaje"></div>
-      <div class="botones">
-        <button id="grabar-comunicar" class="accion" disabled>Signar</button>
-        <button id="borrar" class="accion secundario">Borrar</button>
+
+      <div id="com-abc" class="panel oculto">
+        <div class="tarjeta letra-viva">
+          <div class="etiqueta">Tu mano dice</div>
+          <div class="letra" id="letra-viva-com">–</div>
+        </div>
+        <div id="mensaje-abc"></div>
+        <div class="botones">
+          <button id="anadir-letra" class="accion">Añadir letra</button>
+          <button id="espacio" class="accion secundario">Espacio</button>
+          <button id="borrar-abc" class="accion secundario">Borrar</button>
+        </div>
+        <p class="aviso">Deletrea con la mano: cuando la letra que quieres aparezca arriba, pulsa "Añadir letra" para escribirla.</p>
       </div>
-      <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido, para que quien no sepa signar pueda leerte.</p>
     </div>
   </div>
 

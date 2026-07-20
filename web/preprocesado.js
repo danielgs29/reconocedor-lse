@@ -102,3 +102,18 @@ function construirEntrada(frames) {
 export function prepararEntrada(frames) {
   return construirEntrada(ajustarDuracion(normalizar(frames)));
 }
+
+// Prepara la entrada del reconocedor de abecedario a partir de una mano (21 puntos).
+// Centra la mano en la muñeca y la escala por el tamaño de la palma, igual que en Python.
+export function manoAEntrada(mano) {
+  const muneca = mano[0];
+  const puntos = mano.map((p) => [p.x - muneca.x, p.y - muneca.y, p.z - muneca.z]);
+  const escala = Math.max(Math.hypot(puntos[9][0], puntos[9][1]), 1e-6);
+  const entrada = new Float32Array(63);
+  for (let i = 0; i < 21; i++) {
+    entrada[i * 3] = puntos[i][0] / escala;
+    entrada[i * 3 + 1] = puntos[i][1] / escala;
+    entrada[i * 3 + 2] = puntos[i][2] / escala;
+  }
+  return entrada;
+}
