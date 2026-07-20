@@ -62,13 +62,13 @@ holistic.onResults((resultados) => {
   contexto.clearRect(0, 0, lienzo.width, lienzo.height);
   contexto.drawImage(resultados.image, 0, 0, lienzo.width, lienzo.height);
   if (resultados.poseLandmarks) {
-    drawConnectors(contexto, resultados.poseLandmarks, POSE_CONNECTIONS, { color: "#5b8def", lineWidth: 3 });
-    drawLandmarks(contexto, resultados.poseLandmarks, { color: "#a8c7ff", lineWidth: 1, radius: 2 });
+    drawConnectors(contexto, resultados.poseLandmarks, POSE_CONNECTIONS, { color: "rgba(230,238,237,0.55)", lineWidth: 2 });
+    drawLandmarks(contexto, resultados.poseLandmarks, { color: "rgba(230,238,237,0.75)", lineWidth: 1, radius: 2 });
   }
   for (const mano of [resultados.leftHandLandmarks, resultados.rightHandLandmarks]) {
     if (mano) {
-      drawConnectors(contexto, mano, HAND_CONNECTIONS, { color: "#38b774", lineWidth: 3 });
-      drawLandmarks(contexto, mano, { color: "#7ee0a8", lineWidth: 1, radius: 2 });
+      drawConnectors(contexto, mano, HAND_CONNECTIONS, { color: "#1cc3b8", lineWidth: 4 });
+      drawLandmarks(contexto, mano, { color: "#8fe6df", lineWidth: 1, radius: 3 });
     }
   }
   if (grabando) bufferFrames.push(extraerFrame(resultados));

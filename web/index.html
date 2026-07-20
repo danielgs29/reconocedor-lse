@@ -3,93 +3,196 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reconocedor de Lengua de Signos Española</title>
+  <title>Señas · Reconocedor de Lengua de Signos Española</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Onest:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: light dark; }
+    :root {
+      --bg: #eef1f1;
+      --surface: #ffffff;
+      --surface-2: #e6eaea;
+      --text: #15201f;
+      --muted: #5a6a68;
+      --border: #d7dedd;
+      --accent: #0c9c93;
+      --accent-ink: #ffffff;
+      --good: #2f9e44;
+      --warn: #db7f10;
+      --shadow: 0 1px 3px rgba(20, 40, 38, 0.08), 0 8px 24px rgba(20, 40, 38, 0.06);
+      --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+      --font-body: "Onest", system-ui, -apple-system, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0c1312; --surface: #131c1b; --surface-2: #1b2625; --text: #e9efee;
+        --muted: #90a09e; --border: #253230; --accent: #1cc3b8; --accent-ink: #052220;
+        --good: #46c96c; --warn: #eda43c;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.35);
+      }
+    }
+    :root[data-theme="light"] {
+      --bg: #eef1f1; --surface: #ffffff; --surface-2: #e6eaea; --text: #15201f;
+      --muted: #5a6a68; --border: #d7dedd; --accent: #0c9c93; --accent-ink: #ffffff;
+      --good: #2f9e44; --warn: #db7f10;
+    }
+    :root[data-theme="dark"] {
+      --bg: #0c1312; --surface: #131c1b; --surface-2: #1b2625; --text: #e9efee;
+      --muted: #90a09e; --border: #253230; --accent: #1cc3b8; --accent-ink: #052220;
+      --good: #46c96c; --warn: #eda43c;
+    }
+
+    * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0; padding: 1rem;
-      display: flex; flex-direction: column; align-items: center; gap: 1rem;
-      background: #0f1115; color: #e8eaed;
+      margin: 0; padding: 1.5rem 1rem 3rem; background: var(--bg); color: var(--text);
+      font-family: var(--font-body); line-height: 1.5;
+      display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+      -webkit-font-smoothing: antialiased;
     }
-    h1 { font-size: 1.25rem; font-weight: 600; text-align: center; margin: 0.4rem 0; }
-    #pestanas { display: flex; gap: 0.5rem; }
-    #pestanas button {
-      font-size: 1rem; padding: 0.5rem 1.2rem; border: none; border-radius: 999px;
-      background: #23262e; color: #9aa0a6; cursor: pointer; font-weight: 600;
+    .marco { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    header { text-align: center; }
+    .logo {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em;
+      margin: 0; text-wrap: balance;
     }
-    #pestanas button.activa { background: #5b8def; color: #fff; }
+    .logo span { color: var(--accent); }
+    .sub { color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0; }
+
+    /* Interruptor de modo */
+    .modos {
+      display: flex; gap: 0.25rem; padding: 0.3rem; background: var(--surface-2);
+      border-radius: 999px; width: fit-content; margin: 0 auto;
+    }
+    .modos button {
+      font-family: var(--font-body); font-weight: 600; font-size: 0.95rem;
+      border: none; background: transparent; color: var(--muted);
+      padding: 0.55rem 1.4rem; border-radius: 999px; cursor: pointer; transition: all 0.18s;
+    }
+    .modos button.activa { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+    /* Cámara protagonista */
     #contenedor {
-      position: relative; width: 100%; max-width: 560px; aspect-ratio: 4 / 3;
-      border-radius: 12px; overflow: hidden; background: #000;
+      position: relative; width: 100%; aspect-ratio: 4 / 3;
+      border-radius: 20px; overflow: hidden; background: #000;
+      border: 1px solid var(--border); box-shadow: var(--shadow);
     }
     #video { display: none; }
     #lienzo { width: 100%; height: 100%; display: block; }
-    #estado { font-size: 0.95rem; text-align: center; min-height: 1.4rem; color: #9aa0a6; }
-    .panel { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; width: 100%; max-width: 560px; }
+    #estado {
+      position: absolute; top: 0.75rem; left: 0.75rem;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.35rem 0.7rem; border-radius: 999px;
+      background: rgba(10, 20, 19, 0.62); color: #fff; backdrop-filter: blur(6px);
+      font-size: 0.8rem; font-weight: 500;
+    }
+    #estado::before {
+      content: ""; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .panel { display: flex; flex-direction: column; gap: 1rem; }
     .oculto { display: none; }
-    select { font-size: 1rem; padding: 0.4rem; border-radius: 8px; }
+
+    .tarjeta {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.1rem; box-shadow: var(--shadow);
+    }
+    .fila { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+    label { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+    .etiqueta { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+
+    select {
+      font-family: var(--font-body); font-size: 1rem; font-weight: 500; color: var(--text);
+      padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface-2); cursor: pointer;
+    }
+
+    #referencia {
+      width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4/3; margin-top: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
     button.accion {
-      font-size: 1.05rem; padding: 0.7rem 1.4rem; border-radius: 999px; border: none;
-      background: #5b8def; color: #fff; cursor: pointer; font-weight: 600;
+      font-family: var(--font-body); font-size: 1.05rem; font-weight: 600;
+      padding: 0.8rem 1.5rem; border-radius: 12px; border: none; cursor: pointer;
+      background: var(--accent); color: var(--accent-ink); transition: transform 0.1s, filter 0.15s;
+      width: 100%;
     }
-    button.accion:disabled { opacity: 0.5; cursor: default; }
-    button.secundario { background: #23262e; color: #e8eaed; }
-    #referencia { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4/3; }
-    #resultado-aprender { font-size: 1.5rem; font-weight: 700; min-height: 2rem; text-align: center; }
+    button.accion:hover:not(:disabled) { filter: brightness(1.06); }
+    button.accion:active:not(:disabled) { transform: scale(0.98); }
+    button.accion:disabled { opacity: 0.45; cursor: default; }
+    button.secundario { background: var(--surface-2); color: var(--text); width: auto; }
+    .botones { display: flex; gap: 0.6rem; }
+    .botones .accion { flex: 1; }
+
+    #resultado-aprender { font-size: 1.5rem; font-weight: 700; min-height: 2rem; text-align: center; font-family: var(--font-display); }
+
     #mensaje {
-      width: 100%; min-height: 3rem; padding: 0.8rem; border-radius: 10px;
-      background: #1a1d24; font-size: 1.4rem; font-weight: 600; text-align: center;
+      min-height: 3.5rem; padding: 1rem; border-radius: 12px; background: var(--surface-2);
+      font-size: 1.6rem; font-weight: 600; text-align: center; color: var(--text);
+      font-family: var(--font-display); word-break: break-word;
     }
-    .aviso { text-align: center; color: #9aa0a6; font-size: 0.85rem; margin: 0; }
-    label { color: #9aa0a6; }
+    #mensaje:empty::before { content: "Tu mensaje aparecerá aquí"; color: var(--muted); font-weight: 400; font-size: 1rem; font-family: var(--font-body); }
+
+    .aviso { text-align: center; color: var(--muted); font-size: 0.85rem; margin: 0; }
+    button.accion:focus-visible, .modos button:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
-  <h1>Reconocedor de Lengua de Signos Española</h1>
+  <div class="marco">
+    <header>
+      <h1 class="logo">Se<span>ñ</span>as</h1>
+      <p class="sub">Reconocedor de Lengua de Signos Española</p>
+    </header>
 
-  <div id="pestanas">
-    <button id="tab-aprender" class="activa">Aprender</button>
-    <button id="tab-comunicar">Comunicar</button>
-  </div>
+    <div class="modos" role="tablist">
+      <button id="tab-aprender" class="activa">Aprender</button>
+      <button id="tab-comunicar">Comunicar</button>
+    </div>
 
-  <!-- Cámara, compartida por los dos modos -->
-  <div id="contenedor">
-    <video id="video" playsinline></video>
-    <canvas id="lienzo" width="640" height="480"></canvas>
-  </div>
-  <div id="estado">Cargando…</div>
+    <div id="contenedor">
+      <video id="video" playsinline></video>
+      <canvas id="lienzo" width="640" height="480"></canvas>
+      <div id="estado">Cargando…</div>
+    </div>
 
-  <!-- MODO APRENDER -->
-  <div id="panel-aprender" class="panel">
-    <div>
-      <label for="selector">Signo a practicar:</label>
-      <select id="selector"></select>
+    <!-- MODO APRENDER -->
+    <div id="panel-aprender" class="panel">
+      <div class="tarjeta">
+        <div class="fila">
+          <label for="selector">Signo a practicar</label>
+          <select id="selector"></select>
+        </div>
+        <div class="etiqueta" style="margin-top:0.9rem;">Cómo se hace</div>
+        <video id="referencia" playsinline muted loop autoplay></video>
+      </div>
+      <button id="grabar-aprender" class="accion" disabled>Grabar mi signo</button>
+      <div id="resultado-aprender"></div>
+      <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. Te diré si lo has hecho bien.</p>
     </div>
-    <div style="width:100%;">
-      <div style="font-size:0.85rem; color:#9aa0a6; margin-bottom:0.3rem; text-align:center;">Cómo se hace</div>
-      <video id="referencia" playsinline muted loop autoplay></video>
-    </div>
-    <button id="grabar-aprender" class="accion" disabled>Grabar signo</button>
-    <div id="resultado-aprender"></div>
-    <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. La aplicación te dirá si lo has hecho bien.</p>
-  </div>
 
-  <!-- MODO COMUNICAR -->
-  <div id="panel-comunicar" class="panel oculto">
-    <div>
-      <label for="idioma">Mostrar significado en:</label>
-      <select id="idioma">
-        <option value="es">Español</option>
-        <option value="en">English</option>
-      </select>
+    <!-- MODO COMUNICAR -->
+    <div id="panel-comunicar" class="panel oculto">
+      <div class="tarjeta">
+        <div class="fila">
+          <label for="idioma">Mostrar significado en</label>
+          <select id="idioma">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+      <div id="mensaje"></div>
+      <div class="botones">
+        <button id="grabar-comunicar" class="accion" disabled>Signar</button>
+        <button id="borrar" class="accion secundario">Borrar</button>
+      </div>
+      <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido, para que quien no sepa signar pueda leerte.</p>
     </div>
-    <div style="display:flex; gap:0.6rem;">
-      <button id="grabar-comunicar" class="accion" disabled>Signar</button>
-      <button id="borrar" class="accion secundario">Borrar</button>
-    </div>
-    <div id="mensaje"></div>
-    <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido, para que quien no sepa signar pueda leerte.</p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
