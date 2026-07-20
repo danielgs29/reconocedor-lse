@@ -42,9 +42,18 @@
 <body>
   <h1>Reconocedor de Lengua de Signos Española</h1>
 
-  <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
-    <label for="selector">Signo a practicar:</label>
-    <select id="selector" style="font-size:1rem; padding:0.4rem; border-radius:8px;"></select>
+  <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; justify-content:center;">
+    <span>
+      <label for="idioma">Idioma / Language:</label>
+      <select id="idioma" style="font-size:1rem; padding:0.4rem; border-radius:8px;">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+      </select>
+    </span>
+    <span>
+      <label for="selector">Signo a practicar:</label>
+      <select id="selector" style="font-size:1rem; padding:0.4rem; border-radius:8px;"></select>
+    </span>
   </div>
 
   <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; width:100%;">

@@ -6,7 +6,7 @@ import { loadLiteRt, loadAndCompile, Tensor } from "https://cdn.jsdelivr.net/npm
 
 // Valores de la calibracion, calculados en Python y guardados en calibracion.json.
 const TEMPERATURA = 1.7;
-export const UMBRAL = 0.5;
+export const UMBRAL = 0.3;
 
 let modelo = null;
 let nombres = [];
@@ -48,5 +48,6 @@ export async function predecir(entrada) {
   for (let i = 1; i < calibradas.length; i++) {
     if (calibradas[i] > calibradas[mejor]) mejor = i;
   }
-  return { indice: mejor, nombre: nombres[mejor], confianza: calibradas[mejor] };
+  // Devuelve el numero de signo; la interfaz elige en que idioma mostrarlo.
+  return { indice: mejor, confianza: calibradas[mejor] };
 }

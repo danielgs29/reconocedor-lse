@@ -14,6 +14,7 @@ import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 import argparse
+import math
 from pathlib import Path
 
 import mlflow
@@ -103,16 +104,32 @@ def main():
             "bloques": args.bloques,
         })
 
+        EPOCAS = 120
+        pasos = math.ceil(len(X_train) / 32)
         num_signos = int(y_train.max()) + 1
         modelo = crear_modelo(args.modelo, X_train.shape[1], X_train.shape[2], num_signos, args.dimension, args.bloques)
+        parada = keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=20, restore_best_weights=True)
+
         if args.preentrenado:
             transferir_pesos(modelo, args.preentrenado)
-        parada = keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=15, restore_best_weights=True)
+            # Fase 1: congelar el cuerpo preentrenado y entrenar solo la capa final.
+            for capa in modelo.layers[:-1]:
+                capa.trainable = False
+            modelos.compilar(modelo, pasos, epocas=20, lr_pico=1e-3)
+            print("Fase 1: entrenando solo la capa final", flush=True)
+            modelo.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=20, batch_size=32, verbose=2)
+            # Fase 2: descongelar todo y afinar con ritmo bajo, para no destrozar lo aprendido.
+            for capa in modelo.layers:
+                capa.trainable = True
+            modelos.compilar(modelo, pasos, EPOCAS, lr_pico=3e-4)
+            print("Fase 2: afinando el modelo completo", flush=True)
+        else:
+            modelos.compilar(modelo, pasos, EPOCAS, lr_pico=1e-3)
 
         historia = modelo.fit(
             X_train, y_train,
             validation_data=(X_val, y_val),
-            epochs=100, batch_size=32, callbacks=[parada], verbose=2,
+            epochs=EPOCAS, batch_size=32, callbacks=[parada], verbose=2,
         )
 
         mejor_val = max(historia.history["val_accuracy"])

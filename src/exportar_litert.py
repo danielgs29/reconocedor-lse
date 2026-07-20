@@ -12,6 +12,7 @@ import os
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
+import argparse
 from pathlib import Path
 
 import numpy as np
@@ -19,7 +20,7 @@ import tensorflow as tf
 
 import caracteristicas
 
-RUTA_MODELO = "models/transformer_64conceptos.keras"
+RUTA_MODELO = "models/transformer_pre_asl.keras"
 RUTA_SALIDA = Path("web/modelo.tflite")
 
 
@@ -48,10 +49,10 @@ def convertir(modelo):
         return conversor.convert(), "operaciones nativas + extra de TensorFlow, tamaño fijo"
 
 
-def comprobar(ruta_tflite):
+def comprobar(ruta_tflite, ruta_modelo):
     """Comprueba que el modelo convertido coincide con el original en el grupo de prueba."""
     X = caracteristicas.a_entrada_modelo(np.load("data/processed/X_test.npy")).astype(np.float32)
-    original = tf.keras.models.load_model(RUTA_MODELO).predict(X, verbose=0).argmax(axis=1)
+    original = tf.keras.models.load_model(ruta_modelo).predict(X, verbose=0).argmax(axis=1)
 
     interprete = tf.lite.Interpreter(model_path=str(ruta_tflite))
     interprete.allocate_tensors()
@@ -67,14 +68,18 @@ def comprobar(ruta_tflite):
 
 
 def main():
+    analizador = argparse.ArgumentParser()
+    analizador.add_argument("--modelo", default=RUTA_MODELO, help="ruta del modelo de Keras a convertir")
+    args = analizador.parse_args()
+
     RUTA_SALIDA.parent.mkdir(parents=True, exist_ok=True)
-    modelo = tf.keras.models.load_model(RUTA_MODELO)
+    modelo = tf.keras.models.load_model(args.modelo)
 
     tflite, modo = convertir(modelo)
     RUTA_SALIDA.write_bytes(tflite)
     print(f"Modelo convertido ({modo}), {len(tflite) / 1024:.0f} KB, guardado en {RUTA_SALIDA}")
 
-    coincidencia = comprobar(RUTA_SALIDA)
+    coincidencia = comprobar(RUTA_SALIDA, args.modelo)
     print(f"Coincidencia con el modelo original: {coincidencia * 100:.1f}%")
     if coincidencia < 0.99:
         print("AVISO: hay diferencias entre el original y el convertido.")

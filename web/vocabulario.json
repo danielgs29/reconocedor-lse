@@ -1,66 +1,258 @@
 [
-"PIS",
-"AZUCAR",
-"AFECTAR",
-"CACA",
-"MAREO",
-"CURAR",
-"OPERAR",
-"DOLOR",
-"COMER",
-"ESTRES",
-"CANSADO",
-"ANSIEDAD",
-"EMBARAZO",
-"DIABETES",
-"DORMIR",
-"ENFERMO",
-"DEBIL",
-"PROBAR",
-"CANCER",
-"DROGA",
-"VER^PROBAR",
-"ANALISIS-DE-SANGRE",
-"AGOTAMIENTO",
-"PIEL^CUERPO",
-"DEPRESION",
-"CUIDAR",
-"ACONSEJAR",
-"HOSPITAL",
-"HAMBRE",
-"NACER",
-"OIR^MITAD",
-"ALCOHOL",
-"GARGANTA",
-"GANA",
-"FARMACIA",
-"CENTRO^VIVIR",
-"ARTERIA",
-"GORDO",
-"SUFRIR",
-"HERIDA",
-"FIEBRE",
-"VIRUS",
-"GRIPE",
-"ALERGIA",
-"EVITAR",
-"MENTE^CEREBRO",
-"ENFERMO^CASA",
-"CORAZON",
-"APENDICE",
-"DOLOR-DE-CABEZA",
-"AUXILIAR",
-"ALTA",
-"FUMAR",
-"RELAJAR",
-"URGENTE",
-"INSOMNIO",
-"CONTRA",
-"DIARREA",
-"ADELGAZAR",
-"PULMON",
-"CITA",
-"COMER^SIN",
-"CONTROL",
-"APETECER"
+{
+"es": "PIS",
+"en": "URINE"
+},
+{
+"es": "AZUCAR",
+"en": "SUGAR"
+},
+{
+"es": "AFECTAR",
+"en": "AFFECT"
+},
+{
+"es": "CACA",
+"en": "POOP"
+},
+{
+"es": "MAREO",
+"en": "DIZZINESS"
+},
+{
+"es": "CURAR",
+"en": "CURE"
+},
+{
+"es": "OPERAR",
+"en": "OPERATE"
+},
+{
+"es": "DOLOR",
+"en": "PAIN"
+},
+{
+"es": "COMER",
+"en": "EAT"
+},
+{
+"es": "ESTRES",
+"en": "STRESS"
+},
+{
+"es": "CANSADO",
+"en": "TIRED"
+},
+{
+"es": "ANSIEDAD",
+"en": "ANXIETY"
+},
+{
+"es": "EMBARAZO",
+"en": "PREGNANCY"
+},
+{
+"es": "DIABETES",
+"en": "DIABETES"
+},
+{
+"es": "DORMIR",
+"en": "SLEEP"
+},
+{
+"es": "ENFERMO",
+"en": "SICK"
+},
+{
+"es": "DEBIL",
+"en": "WEAK"
+},
+{
+"es": "PROBAR",
+"en": "TRY"
+},
+{
+"es": "CANCER",
+"en": "CANCER"
+},
+{
+"es": "DROGA",
+"en": "DRUG"
+},
+{
+"es": "VER^PROBAR",
+"en": "TEST"
+},
+{
+"es": "ANALISIS-DE-SANGRE",
+"en": "BLOOD TEST"
+},
+{
+"es": "AGOTAMIENTO",
+"en": "EXHAUSTION"
+},
+{
+"es": "PIEL^CUERPO",
+"en": "SKIN"
+},
+{
+"es": "DEPRESION",
+"en": "DEPRESSION"
+},
+{
+"es": "CUIDAR",
+"en": "CARE"
+},
+{
+"es": "ACONSEJAR",
+"en": "ADVISE"
+},
+{
+"es": "HOSPITAL",
+"en": "HOSPITAL"
+},
+{
+"es": "HAMBRE",
+"en": "HUNGER"
+},
+{
+"es": "NACER",
+"en": "BIRTH"
+},
+{
+"es": "OIR^MITAD",
+"en": "HARD OF HEARING"
+},
+{
+"es": "ALCOHOL",
+"en": "ALCOHOL"
+},
+{
+"es": "GARGANTA",
+"en": "THROAT"
+},
+{
+"es": "GANA",
+"en": "URGE"
+},
+{
+"es": "FARMACIA",
+"en": "PHARMACY"
+},
+{
+"es": "CENTRO^VIVIR",
+"en": "CARE HOME"
+},
+{
+"es": "ARTERIA",
+"en": "ARTERY"
+},
+{
+"es": "GORDO",
+"en": "FAT"
+},
+{
+"es": "SUFRIR",
+"en": "SUFFER"
+},
+{
+"es": "HERIDA",
+"en": "WOUND"
+},
+{
+"es": "FIEBRE",
+"en": "FEVER"
+},
+{
+"es": "VIRUS",
+"en": "VIRUS"
+},
+{
+"es": "GRIPE",
+"en": "FLU"
+},
+{
+"es": "ALERGIA",
+"en": "ALLERGY"
+},
+{
+"es": "EVITAR",
+"en": "AVOID"
+},
+{
+"es": "MENTE^CEREBRO",
+"en": "BRAIN"
+},
+{
+"es": "ENFERMO^CASA",
+"en": "SICK AT HOME"
+},
+{
+"es": "CORAZON",
+"en": "HEART"
+},
+{
+"es": "APENDICE",
+"en": "APPENDIX"
+},
+{
+"es": "DOLOR-DE-CABEZA",
+"en": "HEADACHE"
+},
+{
+"es": "AUXILIAR",
+"en": "AIDE"
+},
+{
+"es": "ALTA",
+"en": "DISCHARGE"
+},
+{
+"es": "FUMAR",
+"en": "SMOKE"
+},
+{
+"es": "RELAJAR",
+"en": "RELAX"
+},
+{
+"es": "URGENTE",
+"en": "URGENT"
+},
+{
+"es": "INSOMNIO",
+"en": "INSOMNIA"
+},
+{
+"es": "CONTRA",
+"en": "AGAINST"
+},
+{
+"es": "DIARREA",
+"en": "DIARRHEA"
+},
+{
+"es": "ADELGAZAR",
+"en": "LOSE WEIGHT"
+},
+{
+"es": "PULMON",
+"en": "LUNG"
+},
+{
+"es": "CITA",
+"en": "APPOINTMENT"
+},
+{
+"es": "COMER^SIN",
+"en": "FASTING"
+},
+{
+"es": "CONTROL",
+"en": "CHECKUP"
+},
+{
+"es": "APETECER",
+"en": "CRAVE"
+}
 ]

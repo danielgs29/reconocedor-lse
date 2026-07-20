@@ -28,7 +28,7 @@ from tensorflow import keras
 
 import caracteristicas
 
-RUTA_MODELO = "models/transformer_64conceptos.keras"
+RUTA_MODELO = "models/transformer_pre_asl.keras"
 RUTA_SALIDA = "calibracion.json"
 
 

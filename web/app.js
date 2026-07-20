@@ -12,6 +12,28 @@ const boton = document.getElementById("grabar");
 const resultado = document.getElementById("resultado");
 const selector = document.getElementById("selector");
 const referencia = document.getElementById("referencia");
+const selectorIdioma = document.getElementById("idioma");
+
+let idioma = "es";
+let vocab = [];
+
+// Nombre de un signo en el idioma elegido.
+function nombreSigno(indice) {
+  return vocab[indice][idioma];
+}
+
+// Rellena el selector de signos con los nombres en el idioma actual, sin perder la elección.
+function rellenarSelector() {
+  const elegido = selector.value;
+  selector.innerHTML = "";
+  vocab.forEach((concepto, indice) => {
+    const opcion = document.createElement("option");
+    opcion.value = indice;
+    opcion.textContent = concepto[idioma];
+    selector.appendChild(opcion);
+  });
+  if (elegido !== "") selector.value = elegido;
+}
 
 const DURACION_GRABACION_MS = 2500;
 
@@ -114,17 +136,20 @@ async function grabarSigno() {
   const prediccion = await predecir(entrada);
 
   const objetivo = parseInt(selector.value, 10);
-  const objetivoNombre = selector.options[selector.selectedIndex].textContent;
   const porcentaje = Math.round(prediccion.confianza * 100);
 
   if (prediccion.confianza < UMBRAL) {
-    resultado.textContent = `No lo tengo claro (${porcentaje}%)`;
+    resultado.textContent = `${idioma === "es" ? "No lo tengo claro" : "Not sure"} (${porcentaje}%)`;
     resultado.style.color = "#9aa0a6";
   } else if (prediccion.indice === objetivo) {
-    resultado.textContent = `Correcto: ${prediccion.nombre} (${porcentaje}%)`;
+    resultado.textContent = `${idioma === "es" ? "Correcto" : "Correct"}: ${nombreSigno(prediccion.indice)} (${porcentaje}%)`;
     resultado.style.color = "#38b774";
   } else {
-    resultado.textContent = `Has hecho ${prediccion.nombre}; el objetivo era ${objetivoNombre}`;
+    const hecho = nombreSigno(prediccion.indice);
+    const objetivoNombre = nombreSigno(objetivo);
+    resultado.textContent = idioma === "es"
+      ? `Has hecho ${hecho}; el objetivo era ${objetivoNombre}`
+      : `You signed ${hecho}; the target was ${objetivoNombre}`;
     resultado.style.color = "#e0a13a";
   }
   estado.textContent = "Elige otro signo o vuelve a intentarlo.";
@@ -143,16 +168,14 @@ function cargarReferencia() {
 // a la vez hace que se pisen una variable interna común, así que las separamos.
 async function iniciar() {
   estado.textContent = "Cargando el modelo…";
-  const nombres = await cargarModelo();
+  vocab = await cargarModelo();
 
-  // Rellena el selector con los 64 signos y muestra el primero.
-  nombres.forEach((nombre, indice) => {
-    const opcion = document.createElement("option");
-    opcion.value = indice;
-    opcion.textContent = nombre;
-    selector.appendChild(opcion);
-  });
+  rellenarSelector();
   selector.addEventListener("change", cargarReferencia);
+  selectorIdioma.addEventListener("change", () => {
+    idioma = selectorIdioma.value;
+    rellenarSelector();
+  });
   cargarReferencia();
 
   estado.textContent = "Pidiendo acceso a la cámara…";

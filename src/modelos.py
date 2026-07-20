@@ -15,17 +15,36 @@ import keras
 from keras import layers, ops
 
 
+def compilar(modelo, pasos_por_epoca, epocas, lr_pico=1e-3):
+    """
+    Prepara el modelo para entrenar con un buen ritmo de aprendizaje.
+
+    Usa calentamiento seguido de descenso suave, el optimizador AdamW y recorte de gradiente.
+    Esto estabiliza el entrenamiento, sobre todo en modelos grandes, que con un ritmo fijo
+    tienden a no converger.
+    """
+    total = max(1, pasos_por_epoca * epocas)
+    calentamiento = max(1, int(0.05 * total))
+    ritmo = keras.optimizers.schedules.CosineDecay(
+        initial_learning_rate=0.0,
+        decay_steps=max(1, total - calentamiento),
+        warmup_target=lr_pico,
+        warmup_steps=calentamiento,
+    )
+    optimizador = keras.optimizers.AdamW(learning_rate=ritmo, weight_decay=1e-4, clipnorm=1.0)
+    modelo.compile(optimizer=optimizador, loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+    return modelo
+
+
 def construir_gru(num_pasos, num_rasgos, num_signos):
-    """Modelo de secuencia GRU."""
-    modelo = keras.Sequential([
+    """Modelo de secuencia GRU, sin compilar."""
+    return keras.Sequential([
         keras.Input(shape=(num_pasos, num_rasgos)),
         layers.Masking(mask_value=0.0),
         layers.GRU(64),
         layers.Dropout(0.3),
         layers.Dense(num_signos, activation="softmax"),
     ])
-    modelo.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-    return modelo
 
 
 def construir_transformer(num_pasos, num_rasgos, num_signos, dimension=64, cabezas=4, oculta=128, bloques=2, dropout=0.3):
@@ -59,6 +78,4 @@ def construir_transformer(num_pasos, num_rasgos, num_signos, dimension=64, cabez
     x = layers.Dropout(dropout)(x)
     salidas = layers.Dense(num_signos, activation="softmax")(x)
 
-    modelo = keras.Model(entradas, salidas)
-    modelo.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-    return modelo
+    return keras.Model(entradas, salidas)
