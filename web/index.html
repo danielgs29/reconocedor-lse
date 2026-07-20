@@ -8,82 +8,90 @@
     :root { color-scheme: light dark; }
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      background: #0f1115;
-      color: #e8eaed;
+      margin: 0; padding: 1rem;
+      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+      background: #0f1115; color: #e8eaed;
     }
-    h1 { font-size: 1.25rem; font-weight: 600; text-align: center; margin: 0.5rem 0; }
+    h1 { font-size: 1.25rem; font-weight: 600; text-align: center; margin: 0.4rem 0; }
+    #pestanas { display: flex; gap: 0.5rem; }
+    #pestanas button {
+      font-size: 1rem; padding: 0.5rem 1.2rem; border: none; border-radius: 999px;
+      background: #23262e; color: #9aa0a6; cursor: pointer; font-weight: 600;
+    }
+    #pestanas button.activa { background: #5b8def; color: #fff; }
     #contenedor {
-      position: relative;
-      width: 100%;
-      max-width: 640px;
-      aspect-ratio: 4 / 3;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #000;
+      position: relative; width: 100%; max-width: 560px; aspect-ratio: 4 / 3;
+      border-radius: 12px; overflow: hidden; background: #000;
     }
-    /* El video se oculta; dibujamos todo sobre el lienzo. */
     #video { display: none; }
     #lienzo { width: 100%; height: 100%; display: block; }
-    #estado {
-      font-size: 0.95rem;
-      text-align: center;
-      min-height: 1.4rem;
-      color: #9aa0a6;
+    #estado { font-size: 0.95rem; text-align: center; min-height: 1.4rem; color: #9aa0a6; }
+    .panel { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; width: 100%; max-width: 560px; }
+    .oculto { display: none; }
+    select { font-size: 1rem; padding: 0.4rem; border-radius: 8px; }
+    button.accion {
+      font-size: 1.05rem; padding: 0.7rem 1.4rem; border-radius: 999px; border: none;
+      background: #5b8def; color: #fff; cursor: pointer; font-weight: 600;
     }
-    .aviso { max-width: 640px; text-align: center; color: #9aa0a6; font-size: 0.85rem; }
+    button.accion:disabled { opacity: 0.5; cursor: default; }
+    button.secundario { background: #23262e; color: #e8eaed; }
+    #referencia { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4/3; }
+    #resultado-aprender { font-size: 1.5rem; font-weight: 700; min-height: 2rem; text-align: center; }
+    #mensaje {
+      width: 100%; min-height: 3rem; padding: 0.8rem; border-radius: 10px;
+      background: #1a1d24; font-size: 1.4rem; font-weight: 600; text-align: center;
+    }
+    .aviso { text-align: center; color: #9aa0a6; font-size: 0.85rem; margin: 0; }
+    label { color: #9aa0a6; }
   </style>
 </head>
 <body>
   <h1>Reconocedor de Lengua de Signos Española</h1>
 
-  <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; justify-content:center;">
-    <span>
-      <label for="idioma">Idioma / Language:</label>
-      <select id="idioma" style="font-size:1rem; padding:0.4rem; border-radius:8px;">
+  <div id="pestanas">
+    <button id="tab-aprender" class="activa">Aprender</button>
+    <button id="tab-comunicar">Comunicar</button>
+  </div>
+
+  <!-- Cámara, compartida por los dos modos -->
+  <div id="contenedor">
+    <video id="video" playsinline></video>
+    <canvas id="lienzo" width="640" height="480"></canvas>
+  </div>
+  <div id="estado">Cargando…</div>
+
+  <!-- MODO APRENDER -->
+  <div id="panel-aprender" class="panel">
+    <div>
+      <label for="selector">Signo a practicar:</label>
+      <select id="selector"></select>
+    </div>
+    <div style="width:100%;">
+      <div style="font-size:0.85rem; color:#9aa0a6; margin-bottom:0.3rem; text-align:center;">Cómo se hace</div>
+      <video id="referencia" playsinline muted loop autoplay></video>
+    </div>
+    <button id="grabar-aprender" class="accion" disabled>Grabar signo</button>
+    <div id="resultado-aprender"></div>
+    <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. La aplicación te dirá si lo has hecho bien.</p>
+  </div>
+
+  <!-- MODO COMUNICAR -->
+  <div id="panel-comunicar" class="panel oculto">
+    <div>
+      <label for="idioma">Mostrar significado en:</label>
+      <select id="idioma">
         <option value="es">Español</option>
         <option value="en">English</option>
       </select>
-    </span>
-    <span>
-      <label for="selector">Signo a practicar:</label>
-      <select id="selector" style="font-size:1rem; padding:0.4rem; border-radius:8px;"></select>
-    </span>
+    </div>
+    <div style="display:flex; gap:0.6rem;">
+      <button id="grabar-comunicar" class="accion" disabled>Signar</button>
+      <button id="borrar" class="accion secundario">Borrar</button>
+    </div>
+    <div id="mensaje"></div>
+    <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido, para que quien no sepa signar pueda leerte.</p>
   </div>
 
-  <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; width:100%;">
-    <div style="flex:1; min-width:280px; max-width:640px;">
-      <div style="font-size:0.85rem; color:#9aa0a6; margin-bottom:0.3rem;">Cómo se hace</div>
-      <video id="referencia" playsinline muted loop autoplay
-             style="width:100%; border-radius:12px; background:#000; aspect-ratio:4/3;"></video>
-    </div>
-    <div id="contenedor" style="flex:1; min-width:280px;">
-      <video id="video" playsinline></video>
-      <canvas id="lienzo" width="640" height="480"></canvas>
-    </div>
-  </div>
-
-  <div id="estado">Cargando…</div>
-
-  <button id="grabar" disabled style="
-    font-size: 1.05rem; padding: 0.7rem 1.4rem; border-radius: 999px; border: none;
-    background: #5b8def; color: #fff; cursor: pointer; font-weight: 600;">
-    Grabar signo
-  </button>
-
-  <div id="resultado" style="font-size: 1.6rem; font-weight: 700; min-height: 2rem; text-align: center;"></div>
-
-  <p class="aviso">
-    Permite el acceso a la cámara. Pulsa "Grabar signo", haz un signo frente a la cámara
-    durante un par de segundos, y la aplicación intentará reconocerlo.
-  </p>
-
-  <!-- MediaPipe Holistic, la misma versión con la que se prepararon los datos -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>

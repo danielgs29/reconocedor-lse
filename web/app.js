@@ -1,5 +1,6 @@
-// Aplicacion completa: abre la camara, saca los puntos con MediaPipe, y al pulsar el boton
-// graba un signo durante unos segundos y lo reconoce con el modelo.
+// Aplicación con dos modos:
+//  - Aprender: eliges un signo, lo imitas y te corrige. Todo en español.
+//  - Comunicar: signas libremente y se escribe el significado, en el idioma elegido.
 
 import { extraerFrame, prepararEntrada } from "./preprocesado.js";
 import { cargarModelo, predecir, UMBRAL } from "./modelo.js";
@@ -8,67 +9,58 @@ const video = document.getElementById("video");
 const lienzo = document.getElementById("lienzo");
 const contexto = lienzo.getContext("2d");
 const estado = document.getElementById("estado");
-const boton = document.getElementById("grabar");
-const resultado = document.getElementById("resultado");
+
+// Pestañas y paneles
+const tabAprender = document.getElementById("tab-aprender");
+const tabComunicar = document.getElementById("tab-comunicar");
+const panelAprender = document.getElementById("panel-aprender");
+const panelComunicar = document.getElementById("panel-comunicar");
+
+// Modo Aprender
 const selector = document.getElementById("selector");
 const referencia = document.getElementById("referencia");
+const botonAprender = document.getElementById("grabar-aprender");
+const resultadoAprender = document.getElementById("resultado-aprender");
+
+// Modo Comunicar
 const selectorIdioma = document.getElementById("idioma");
+const botonComunicar = document.getElementById("grabar-comunicar");
+const botonBorrar = document.getElementById("borrar");
+const mensaje = document.getElementById("mensaje");
 
-let idioma = "es";
+const DURACION_GRABACION_MS = 2500;
+
 let vocab = [];
+let idioma = "es";
+let grabando = false;
+let bufferFrames = [];
+let fraseComunicar = [];   // signos reconocidos en el modo comunicar (por índice)
 
-// Nombre de un signo en el idioma elegido.
+// Lienzo oculto para voltear la imagen en espejo antes de analizarla,
+// igual que se hizo con los datos de entrenamiento.
+const espejo = document.createElement("canvas");
+const contextoEspejo = espejo.getContext("2d");
+
 function nombreSigno(indice) {
   return vocab[indice][idioma];
 }
 
-// Rellena el selector de signos con los nombres en el idioma actual, sin perder la elección.
-function rellenarSelector() {
-  const elegido = selector.value;
-  selector.innerHTML = "";
-  vocab.forEach((concepto, indice) => {
-    const opcion = document.createElement("option");
-    opcion.value = indice;
-    opcion.textContent = concepto[idioma];
-    selector.appendChild(opcion);
-  });
-  if (elegido !== "") selector.value = elegido;
-}
-
-const DURACION_GRABACION_MS = 2500;
-
-// Lienzo oculto donde volteamos la imagen en espejo antes de analizarla, para que los
-// puntos coincidan con el entrenamiento, que tambien volteaba la imagen.
-const espejo = document.createElement("canvas");
-const contextoEspejo = espejo.getContext("2d");
-
-let grabando = false;
-let bufferFrames = [];
-let ultimoResultado = null;
-
+// --- MediaPipe ---
 const holistic = new Holistic({
   locateFile: (archivo) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${archivo}`,
 });
 holistic.setOptions({
-  modelComplexity: 1,
-  smoothLandmarks: true,
-  refineFaceLandmarks: false,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5,
+  modelComplexity: 1, smoothLandmarks: true, refineFaceLandmarks: false,
+  minDetectionConfidence: 0.5, minTrackingConfidence: 0.5,
 });
 
 holistic.onResults((resultados) => {
-  ultimoResultado = resultados;
-
   if (lienzo.width !== resultados.image.width) {
     lienzo.width = resultados.image.width;
     lienzo.height = resultados.image.height;
   }
-
   contexto.clearRect(0, 0, lienzo.width, lienzo.height);
-  // La imagen que analiza MediaPipe ya viene volteada, asi que la dibujamos tal cual.
   contexto.drawImage(resultados.image, 0, 0, lienzo.width, lienzo.height);
-
   if (resultados.poseLandmarks) {
     drawConnectors(contexto, resultados.poseLandmarks, POSE_CONNECTIONS, { color: "#5b8def", lineWidth: 3 });
     drawLandmarks(contexto, resultados.poseLandmarks, { color: "#a8c7ff", lineWidth: 1, radius: 2 });
@@ -79,14 +71,9 @@ holistic.onResults((resultados) => {
       drawLandmarks(contexto, mano, { color: "#7ee0a8", lineWidth: 1, radius: 2 });
     }
   }
-
-  // Si estamos grabando, guardamos el fotograma.
-  if (grabando) {
-    bufferFrames.push(extraerFrame(resultados));
-  }
+  if (grabando) bufferFrames.push(extraerFrame(resultados));
 });
 
-// Voltea el fotograma del video en un lienzo oculto y se lo pasa a MediaPipe.
 function enviarFrameVolteado() {
   if (espejo.width !== video.videoWidth && video.videoWidth) {
     espejo.width = video.videoWidth;
@@ -100,88 +87,116 @@ function enviarFrameVolteado() {
   return holistic.send({ image: espejo });
 }
 
-const camara = new Camera(video, {
-  onFrame: enviarFrameVolteado,
-  width: 640,
-  height: 480,
-});
+const camara = new Camera(video, { onFrame: enviarFrameVolteado, width: 640, height: 480 });
 
+// --- Grabación de un signo (común a los dos modos) ---
 async function grabarSigno() {
-  boton.disabled = true;
-  resultado.textContent = "";
+  botonAprender.disabled = true;
+  botonComunicar.disabled = true;
   bufferFrames = [];
   grabando = true;
 
-  // Cuenta atras sencilla mientras se graba.
   let restante = Math.round(DURACION_GRABACION_MS / 1000);
-  estado.textContent = `Grabando… haz el signo (${restante})`;
+  estado.textContent = `Grabando… (${restante})`;
   const cuenta = setInterval(() => {
     restante -= 1;
-    if (restante > 0) estado.textContent = `Grabando… haz el signo (${restante})`;
+    if (restante > 0) estado.textContent = `Grabando… (${restante})`;
   }, 1000);
 
   await new Promise((r) => setTimeout(r, DURACION_GRABACION_MS));
   clearInterval(cuenta);
   grabando = false;
-
   estado.textContent = "Reconociendo…";
-  if (bufferFrames.length < 3) {
-    resultado.textContent = "No se detectaron manos";
-    estado.textContent = "Inténtalo de nuevo, con las manos bien visibles.";
-    boton.disabled = false;
-    return;
+
+  let prediccion = null;
+  if (bufferFrames.length >= 3) {
+    prediccion = await predecir(prepararEntrada(bufferFrames));
   }
-
-  const entrada = prepararEntrada(bufferFrames);
-  const prediccion = await predecir(entrada);
-
-  const objetivo = parseInt(selector.value, 10);
-  const porcentaje = Math.round(prediccion.confianza * 100);
-
-  if (prediccion.confianza < UMBRAL) {
-    resultado.textContent = `${idioma === "es" ? "No lo tengo claro" : "Not sure"} (${porcentaje}%)`;
-    resultado.style.color = "#9aa0a6";
-  } else if (prediccion.indice === objetivo) {
-    resultado.textContent = `${idioma === "es" ? "Correcto" : "Correct"}: ${nombreSigno(prediccion.indice)} (${porcentaje}%)`;
-    resultado.style.color = "#38b774";
-  } else {
-    const hecho = nombreSigno(prediccion.indice);
-    const objetivoNombre = nombreSigno(objetivo);
-    resultado.textContent = idioma === "es"
-      ? `Has hecho ${hecho}; el objetivo era ${objetivoNombre}`
-      : `You signed ${hecho}; the target was ${objetivoNombre}`;
-    resultado.style.color = "#e0a13a";
-  }
-  estado.textContent = "Elige otro signo o vuelve a intentarlo.";
-  boton.disabled = false;
+  estado.textContent = "Listo.";
+  botonAprender.disabled = false;
+  botonComunicar.disabled = false;
+  return prediccion;
 }
 
-boton.addEventListener("click", grabarSigno);
+// --- Modo Aprender ---
+async function practicar() {
+  resultadoAprender.textContent = "";
+  const prediccion = await grabarSigno();
+  const objetivo = parseInt(selector.value, 10);
 
-// Muestra el video de demostracion del signo elegido en el selector.
+  if (!prediccion) {
+    resultadoAprender.textContent = "No se detectaron manos";
+    resultadoAprender.style.color = "#9aa0a6";
+    return;
+  }
+  const porcentaje = Math.round(prediccion.confianza * 100);
+  if (prediccion.confianza < UMBRAL) {
+    resultadoAprender.textContent = `No lo tengo claro (${porcentaje}%)`;
+    resultadoAprender.style.color = "#9aa0a6";
+  } else if (prediccion.indice === objetivo) {
+    resultadoAprender.textContent = `Correcto: ${vocab[objetivo].es} (${porcentaje}%)`;
+    resultadoAprender.style.color = "#38b774";
+  } else {
+    resultadoAprender.textContent = `Has hecho ${vocab[prediccion.indice].es}; el objetivo era ${vocab[objetivo].es}`;
+    resultadoAprender.style.color = "#e0a13a";
+  }
+}
+
 function cargarReferencia() {
   referencia.src = `referencias/${selector.value}.mp4`;
   referencia.play().catch(() => {});
 }
 
-// Arranque: primero el modelo del todo, y solo despues la cámara. Cargar las dos librerías
-// a la vez hace que se pisen una variable interna común, así que las separamos.
+// --- Modo Comunicar ---
+function renderMensaje() {
+  mensaje.textContent = fraseComunicar.map(nombreSigno).join(" ");
+}
+
+async function signarComunicar() {
+  const prediccion = await grabarSigno();
+  if (prediccion && prediccion.confianza >= UMBRAL) {
+    fraseComunicar.push(prediccion.indice);
+    renderMensaje();
+  } else {
+    estado.textContent = idioma === "es" ? "No lo tengo claro, repite el signo." : "Not sure, sign again.";
+  }
+}
+
+// --- Cambio de modo ---
+function activarModo(modo) {
+  const aprender = modo === "aprender";
+  tabAprender.classList.toggle("activa", aprender);
+  tabComunicar.classList.toggle("activa", !aprender);
+  panelAprender.classList.toggle("oculto", !aprender);
+  panelComunicar.classList.toggle("oculto", aprender);
+}
+
+tabAprender.addEventListener("click", () => activarModo("aprender"));
+tabComunicar.addEventListener("click", () => activarModo("comunicar"));
+botonAprender.addEventListener("click", practicar);
+botonComunicar.addEventListener("click", signarComunicar);
+botonBorrar.addEventListener("click", () => { fraseComunicar = []; renderMensaje(); });
+selector.addEventListener("change", cargarReferencia);
+selectorIdioma.addEventListener("change", () => { idioma = selectorIdioma.value; renderMensaje(); });
+
+// --- Arranque ---
 async function iniciar() {
   estado.textContent = "Cargando el modelo…";
   vocab = await cargarModelo();
 
-  rellenarSelector();
-  selector.addEventListener("change", cargarReferencia);
-  selectorIdioma.addEventListener("change", () => {
-    idioma = selectorIdioma.value;
-    rellenarSelector();
+  vocab.forEach((concepto, indice) => {
+    const opcion = document.createElement("option");
+    opcion.value = indice;
+    opcion.textContent = concepto.es;   // en el modo aprender, siempre en español
+    selector.appendChild(opcion);
   });
   cargarReferencia();
 
   estado.textContent = "Pidiendo acceso a la cámara…";
   await camara.start();
-  estado.textContent = "Listo. Elige un signo, imítalo y pulsa 'Grabar signo'.";
-  boton.disabled = false;
+  estado.textContent = "Listo.";
+  botonAprender.disabled = false;
+  botonComunicar.disabled = false;
 }
 
 iniciar().catch((error) => {
