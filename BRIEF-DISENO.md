@@ -1,4 +1,4 @@
-# Brief de diseño — Aplicación "Señas" (reconocedor de LSE)
+# Brief de diseño — Aplicación "Signia" (reconocedor de LSE)
 
 Este documento describe la aplicación y todo lo necesario para rediseñar su interfaz sin
 romper la lógica. Objetivo: mejorar mucho el diseño visual manteniendo intacta la

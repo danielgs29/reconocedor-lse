@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signia · Reconocedor de Lengua de Signos Española</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0f0e; --surface: #121a19; --surface-2: #0d1413; --raised: #141d1b;
+      --text: #e9efee; --muted: #8fa09d; --border: #263230;
+      --accent: #1cc3b8; --accent-ink: #04211e; --accent-dim: rgba(28,195,184,0.25);
+      --good: #5fdc85; --good-bg: rgba(70,201,108,0.14);
+      --warn: #f0b45e; --warn-bg: rgba(237,164,60,0.14);
+      --bad: #ff7a7a; --bad-bg: rgba(235,87,87,0.14);
+      --cam-bg: #0a100f;
+      --shadow-accent: 0 6px 18px rgba(28,195,184,0.28);
+      --font-display: "Space Grotesk", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #eef1f0; --surface: #ffffff; --surface-2: #e4e9e8; --raised: #e4e9e8;
+        --text: #14201e; --muted: #5a6a68; --border: #d3dcda;
+        --accent: #0c9c93; --accent-ink: #ffffff; --accent-dim: rgba(12,156,147,0.22);
+        --good: #237a37; --good-bg: rgba(47,158,68,0.14);
+        --warn: #a86a10; --warn-bg: rgba(219,127,16,0.14);
+        --bad: #c22f2f; --bad-bg: rgba(194,47,47,0.12);
+        --cam-bg: #101817;
+        --shadow-accent: 0 6px 18px rgba(12,156,147,0.3);
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #0b0f0e; --surface: #121a19; --surface-2: #0d1413; --raised: #141d1b;
+      --text: #e9efee; --muted: #8fa09d; --border: #263230;
+      --accent: #1cc3b8; --accent-ink: #04211e; --accent-dim: rgba(28,195,184,0.25);
+      --good: #5fdc85; --good-bg: rgba(70,201,108,0.14);
+      --warn: #f0b45e; --warn-bg: rgba(237,164,60,0.14);
+      --bad: #ff7a7a; --bad-bg: rgba(235,87,87,0.14);
+      --cam-bg: #0a100f;
+      --shadow-accent: 0 6px 18px rgba(28,195,184,0.28);
+    }
+    :root[data-theme="light"] {
+      --bg: #eef1f0; --surface: #ffffff; --surface-2: #e4e9e8; --raised: #e4e9e8;
+      --text: #14201e; --muted: #5a6a68; --border: #d3dcda;
+      --accent: #0c9c93; --accent-ink: #ffffff; --accent-dim: rgba(12,156,147,0.22);
+      --good: #237a37; --good-bg: rgba(47,158,68,0.14);
+      --warn: #a86a10; --warn-bg: rgba(219,127,16,0.14);
+      --bad: #c22f2f; --bad-bg: rgba(194,47,47,0.12);
+      --cam-bg: #101817;
+      --shadow-accent: 0 6px 18px rgba(12,156,147,0.3);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 1.25rem 1rem 3rem; background: var(--bg); color: var(--text);
+      font-family: var(--font-display); line-height: 1.5;
+      display: flex; flex-direction: column; align-items: center;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); }
+    a:hover { color: var(--text); }
+    .marco { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 0.9rem; }
+
+    header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .logo { font-weight: 700; font-size: 1.45rem; letter-spacing: -0.01em; margin: 0; text-transform: uppercase; }
+    .logo span { color: var(--accent); }
+    .logo a { color: inherit; text-decoration: none; }
+    .logo a:hover { opacity: 0.85; }
+    .cabecera-der { display: flex; align-items: center; gap: 0.5rem; }
+
+    .modos { display: flex; gap: 3px; padding: 4px; background: var(--raised); border: 1px solid var(--border); border-radius: 999px; }
+    .modos button { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; border: none; background: transparent; color: var(--muted); padding: 0.45rem 1rem; border-radius: 999px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .modos button.activa { background: var(--accent); color: var(--accent-ink); }
+
+    #tema { width: 2.1rem; height: 2.1rem; border-radius: 999px; border: 1px solid var(--border); background: var(--raised); color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; display: grid; place-items: center; }
+    #tema:hover { color: var(--text); }
+
+    /* Cámara */
+    #contenedor { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--cam-bg); border: 1px solid var(--border); }
+    #video { display: none; }
+    #lienzo { width: 100%; height: 100%; display: block; }
+    .esquina { position: absolute; width: 22px; height: 22px; border: 0 solid var(--accent); pointer-events: none; z-index: 2; }
+    .esquina.tl { top: 10px; left: 10px; border-top-width: 2px; border-left-width: 2px; border-top-left-radius: 4px; }
+    .esquina.tr { top: 10px; right: 10px; border-top-width: 2px; border-right-width: 2px; border-top-right-radius: 4px; }
+    .esquina.bl { bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px; border-bottom-left-radius: 4px; }
+    .esquina.br { bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px; border-bottom-right-radius: 4px; }
+    #estado {
+      position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 2;
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.32rem 0.75rem;
+      border-radius: 999px; background: rgba(8,16,15,0.68); backdrop-filter: blur(6px);
+      color: #d7fbf8; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; max-width: calc(100% - 24px);
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    #estado::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+
+    .panel { display: flex; flex-direction: column; gap: 0.9rem; }
+    .oculto { display: none !important; }
+
+    .subtabs { display: flex; gap: 0.4rem; justify-content: center; }
+    .subtabs button { font-family: var(--font-display); font-weight: 600; font-size: 0.82rem; border: 1px solid var(--border); background: transparent; color: var(--muted); padding: 0.38rem 1.05rem; border-radius: 999px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .subtabs button.activa { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+    .tarjeta { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; }
+    .fila { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+    label, .etiqueta { color: var(--muted); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; }
+    select { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--text); padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; max-width: 100%; }
+    #referencia, #ref-letra { width: 100%; border-radius: 12px; background: var(--cam-bg); aspect-ratio: 4/3; border: 1px solid var(--border); object-fit: cover; display: block; }
+
+    button.accion { font-family: var(--font-display); font-size: 1rem; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 14px; border: none; cursor: pointer; background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-accent); transition: transform 0.1s, filter 0.15s; width: 100%; }
+    button.accion:hover:not(:disabled) { filter: brightness(1.08); }
+    button.accion:active:not(:disabled) { transform: scale(0.98); }
+    button.accion:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+    button.secundario { background: var(--raised); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    .botones { display: flex; gap: 0.6rem; }
+    .botones .accion { flex: 1; }
+
+    #resultado-aprender, #resultado-letra { font-size: 1.35rem; font-weight: 700; min-height: 2.1rem; text-align: center; }
+
+    .letra-viva { align-items: center; text-align: center; }
+    .letra-viva .letra { font-weight: 700; font-size: 3.6rem; line-height: 1.1; color: var(--accent); min-height: 4rem; }
+
+    #mensaje, #mensaje-abc { min-height: 3.6rem; padding: 0.9rem 1rem; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); font-size: 1.45rem; font-weight: 600; text-align: center; color: var(--text); word-break: break-word; letter-spacing: 0.04em; }
+    #mensaje:empty::before, #mensaje-abc:empty::before { content: "Tu mensaje aparecerá aquí"; color: var(--muted); font-weight: 400; font-size: 0.9rem; font-family: var(--font-mono); letter-spacing: 0.02em; }
+
+    .aviso { text-align: center; color: var(--muted); font-size: 0.82rem; margin: 0; text-wrap: pretty; }
+
+    button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    @media (max-width: 420px) {
+      .logo { font-size: 1.2rem; }
+      .modos button { padding: 0.42rem 0.75rem; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="marco">
+    <header>
+      <h1 class="logo"><a href="index.html" title="Volver al inicio">Sign<span>ia</span><span>_</span></a></h1>
+      <div class="cabecera-der">
+        <div class="modos" role="tablist" aria-label="Modo">
+          <button id="tab-aprender" class="activa">Aprender</button>
+          <button id="tab-comunicar">Comunicar</button>
+        </div>
+        <button id="tema" type="button" aria-label="Cambiar tema claro u oscuro" title="Tema claro / oscuro">◐</button>
+      </div>
+    </header>
+
+    <div id="contenedor">
+      <video id="video" playsinline></video>
+      <canvas id="lienzo" width="640" height="480"></canvas>
+      <div class="esquina tl"></div><div class="esquina tr"></div>
+      <div class="esquina bl"></div><div class="esquina br"></div>
+      <div id="estado">Cargando…</div>
+    </div>
+
+    <!-- MODO APRENDER -->
+    <div id="panel-aprender" class="panel">
+      <div class="subtabs">
+        <button id="sub-apr-signos" class="activa">Signos</button>
+        <button id="sub-apr-abc">Abecedario</button>
+      </div>
+
+      <div id="apr-signos" class="panel">
+        <div class="tarjeta">
+          <div class="fila">
+            <label for="selector">Signo a practicar</label>
+            <select id="selector"></select>
+          </div>
+          <video id="referencia" playsinline muted loop autoplay></video>
+        </div>
+        <button id="grabar-aprender" class="accion" disabled>● Grabar mi signo</button>
+        <div id="resultado-aprender"></div>
+        <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. Te diré si lo has hecho bien.</p>
+      </div>
+
+      <div id="apr-abc" class="panel oculto">
+        <div class="tarjeta">
+          <div class="fila">
+            <label for="selector-letra">Letra a practicar</label>
+            <select id="selector-letra"></select>
+          </div>
+          <img id="ref-letra" alt="Forma de la letra" />
+        </div>
+        <div class="tarjeta letra-viva">
+          <div class="etiqueta">Tu mano dice</div>
+          <div class="letra" id="letra-viva-apr">–</div>
+        </div>
+        <div id="resultado-letra"></div>
+        <p class="aviso">Haz la letra con la mano frente a la cámara. Se reconoce al momento; mantenla hasta que salga "Correcto".</p>
+      </div>
+    </div>
+
+    <!-- MODO COMUNICAR -->
+    <div id="panel-comunicar" class="panel oculto">
+      <div class="subtabs">
+        <button id="sub-com-signos" class="activa">Signos</button>
+        <button id="sub-com-abc">Abecedario</button>
+      </div>
+
+      <div id="com-signos" class="panel">
+        <div class="tarjeta">
+          <div class="fila">
+            <label for="idioma">Mostrar significado en</label>
+            <select id="idioma">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+        <div id="mensaje"></div>
+        <div class="botones">
+          <button id="grabar-comunicar" class="accion" disabled>● Signar</button>
+          <button id="borrar" class="accion secundario">Borrar</button>
+        </div>
+        <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido.</p>
+      </div>
+
+      <div id="com-abc" class="panel oculto">
+        <div class="tarjeta letra-viva">
+          <div class="etiqueta">Tu mano dice</div>
+          <div class="letra" id="letra-viva-com">–</div>
+        </div>
+        <div id="mensaje-abc"></div>
+        <div class="botones">
+          <button id="anadir-letra" class="accion">Añadir letra</button>
+          <button id="espacio" class="accion secundario">Espacio</button>
+          <button id="borrar-abc" class="accion secundario">Borrar</button>
+        </div>
+        <p class="aviso">Deletrea con la mano: cuando la letra que quieres aparezca arriba, pulsa "Añadir letra" para escribirla.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Conmutador de tema (independiente de app.js).
+    (function () {
+      var raiz = document.documentElement;
+      var guardado = localStorage.getItem("signia-tema");
+      if (guardado === "light" || guardado === "dark") raiz.setAttribute("data-theme", guardado);
+      document.getElementById("tema").addEventListener("click", function () {
+        var actual = raiz.getAttribute("data-theme") ||
+          (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        var nuevo = actual === "light" ? "dark" : "light";
+        raiz.setAttribute("data-theme", nuevo);
+        localStorage.setItem("signia-tema", nuevo);
+      });
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

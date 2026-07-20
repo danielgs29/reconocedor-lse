@@ -1,197 +1,303 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Señas · Reconocedor de Lengua de Signos Española</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Onest:wght@400;500;600&display=swap" rel="stylesheet" />
+<!DOCTYPE html>
+<html lang="es"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signia · Reconocedor de Lengua de Signos Española</title>
+  <meta name="description" content="Signia reconoce signos de la LSE y el alfabeto dactilológico con la cámara, procesando todo en tu dispositivo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #eef1f1; --surface: #ffffff; --surface-2: #e6eaea; --text: #15201f;
-      --muted: #5a6a68; --border: #d7dedd; --accent: #0c9c93; --accent-ink: #ffffff;
-      --good: #2f9e44; --warn: #db7f10;
-      --shadow: 0 1px 3px rgba(20,40,38,0.08), 0 8px 24px rgba(20,40,38,0.06);
-      --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-      --font-body: "Onest", system-ui, -apple-system, sans-serif;
+      --bg: #0b0f0e; --surface: #121a19; --surface-2: #0d1413; --raised: #141d1b;
+      --text: #e9efee; --muted: #8fa09d; --border: #263230;
+      --accent: #1cc3b8; --accent-ink: #04211e; --accent-dim: rgba(28,195,184,0.25);
+      --cam-bg: #0a100f;
+      --font-display: "Space Grotesk", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
     }
-    @media (prefers-color-scheme: dark) {
+    @media (prefers-color-scheme: light) {
       :root {
-        --bg: #0c1312; --surface: #131c1b; --surface-2: #1b2625; --text: #e9efee;
-        --muted: #90a09e; --border: #253230; --accent: #1cc3b8; --accent-ink: #052220;
-        --good: #46c96c; --warn: #eda43c;
-        --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.35);
+        --bg: #eef1f0; --surface: #ffffff; --surface-2: #e7ecea; --raised: #e4e9e8;
+        --text: #14201e; --muted: #5a6a68; --border: #c9d4d2;
+        --accent: #0c9c93; --accent-ink: #ffffff; --accent-dim: rgba(12,156,147,0.22);
+        --cam-bg: #101817;
       }
     }
-    :root[data-theme="light"] {
-      --bg:#eef1f1; --surface:#fff; --surface-2:#e6eaea; --text:#15201f; --muted:#5a6a68;
-      --border:#d7dedd; --accent:#0c9c93; --accent-ink:#fff; --good:#2f9e44; --warn:#db7f10;
-    }
     :root[data-theme="dark"] {
-      --bg:#0c1312; --surface:#131c1b; --surface-2:#1b2625; --text:#e9efee; --muted:#90a09e;
-      --border:#253230; --accent:#1cc3b8; --accent-ink:#052220; --good:#46c96c; --warn:#eda43c;
+      --bg: #0b0f0e; --surface: #121a19; --surface-2: #0d1413; --raised: #141d1b;
+      --text: #e9efee; --muted: #8fa09d; --border: #263230;
+      --accent: #1cc3b8; --accent-ink: #04211e; --accent-dim: rgba(28,195,184,0.25);
+      --cam-bg: #0a100f;
+    }
+    :root[data-theme="light"] {
+      --bg: #eef1f0; --surface: #ffffff; --surface-2: #e7ecea; --raised: #e4e9e8;
+      --text: #14201e; --muted: #5a6a68; --border: #c9d4d2;
+      --accent: #0c9c93; --accent-ink: #ffffff; --accent-dim: rgba(12,156,147,0.22);
+      --cam-bg: #101817;
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0; padding: 1.5rem 1rem 3rem; background: var(--bg); color: var(--text);
-      font-family: var(--font-body); line-height: 1.5;
-      display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: var(--font-display); line-height: 1.55;
       -webkit-font-smoothing: antialiased;
+      padding: clamp(0.9rem, 3vw, 2rem);
+      display: flex; justify-content: center;
     }
-    .marco { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 1.25rem; }
-    header { text-align: center; }
-    .logo { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; margin: 0; }
+    a { color: var(--accent); }
+    a:hover { color: var(--text); }
+
+    /* Todo el documento es un panel de instrumento, con marcas de registro */
+    .panel { position: relative; width: 100%; max-width: 940px; border: 1px solid var(--border); background: var(--bg); }
+    .registro { position: absolute; width: 15px; height: 15px; pointer-events: none; color: var(--muted); }
+    .registro::before, .registro::after { content: ""; position: absolute; background: currentColor; }
+    .registro::before { left: 7px; top: 0; width: 1px; height: 15px; }
+    .registro::after { top: 7px; left: 0; height: 1px; width: 15px; }
+    .registro.tl { top: -8px; left: -8px; } .registro.tr { top: -8px; right: -8px; }
+    .registro.bl { bottom: -8px; left: -8px; } .registro.br { bottom: -8px; right: -8px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1rem 1.4rem; border-bottom: 1px solid var(--border); }
+    .logo { font-weight: 700; font-size: 1.35rem; letter-spacing: -0.01em; margin: 0; text-transform: uppercase; }
     .logo span { color: var(--accent); }
-    .sub { color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0; }
+    .cabecera-der { display: flex; align-items: center; gap: 1rem; }
+    .hud { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 1rem; }
+    .vivo { color: var(--accent); display: inline-flex; align-items: center; gap: 0.45rem; }
+    .vivo::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    #tema { width: 2.1rem; height: 2.1rem; border-radius: 999px; border: 1px solid var(--border); background: var(--raised); color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; display: grid; place-items: center; flex: none; }
+    #tema:hover { color: var(--text); }
 
-    .modos { display: flex; gap: 0.25rem; padding: 0.3rem; background: var(--surface-2); border-radius: 999px; width: fit-content; margin: 0 auto; }
-    .modos button { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--muted); padding: 0.55rem 1.4rem; border-radius: 999px; cursor: pointer; transition: all 0.18s; }
-    .modos button.activa { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+    /* Presentación asimétrica: lomo vertical + texto + visor que rompe la caja */
+    .presentacion { display: grid; grid-template-columns: 2.2rem 1.1fr 1fr; border-bottom: 1px solid var(--border); }
+    .lomo { border-right: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: center; padding: 1rem 0; }
+    .lomo span { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .presentacion-texto { padding: 2.6rem 2rem 2.4rem 1.8rem; display: flex; flex-direction: column; gap: 1.15rem; align-items: flex-start; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 4.6vw, 2.6rem); line-height: 1.14; letter-spacing: -0.025em; font-weight: 700; text-wrap: balance; }
+    h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0.06em 0.18em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+    .entradilla { margin: 0; color: var(--muted); font-size: 0.96rem; max-width: 30rem; text-wrap: pretty; }
+    .entradilla strong { color: var(--text); font-weight: 600; }
 
-    #contenedor { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--border); box-shadow: var(--shadow); }
-    #video { display: none; }
-    #lienzo { width: 100%; height: 100%; display: block; }
-    #estado { position: absolute; top: 0.75rem; left: 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(10,20,19,0.62); color: #fff; backdrop-filter: blur(6px); font-size: 0.8rem; font-weight: 500; }
-    #estado::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+    /* CTA encuadrado por el visor: la acción está "en el objetivo" */
+    .cta-encuadre { position: relative; padding: 9px; margin-top: 0.5rem; }
+    .cta-encuadre i { position: absolute; width: 16px; height: 16px; border: 0 solid var(--accent); }
+    .cta-encuadre i:nth-child(1) { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+    .cta-encuadre i:nth-child(2) { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+    .cta-encuadre i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+    .cta-encuadre i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+    .cta {
+      display: inline-flex; align-items: center; gap: 0.7rem; text-decoration: none;
+      background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 1.05rem;
+      padding: 0.85rem 1.6rem; border-radius: 10px;
+      transition: transform 0.1s, filter 0.15s;
+    }
+    .cta .tecla { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.1em; border: 1px solid rgba(4,33,30,0.35); border-radius: 5px; padding: 0.1rem 0.4rem; }
+    .cta:hover { filter: brightness(1.08); color: var(--accent-ink); }
+    .cta:active { transform: scale(0.98); }
+    .cta-nota { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
 
-    .panel { display: flex; flex-direction: column; gap: 1rem; }
-    .oculto { display: none !important; }
+    /* Visor pegado al borde del panel, sin flotar en el aire */
+    .visor-celda { border-left: 1px solid var(--border); position: relative; background: var(--cam-bg); min-height: 300px; overflow: hidden; }
+    .esquina { position: absolute; width: 22px; height: 22px; border: 0 solid var(--accent); z-index: 2; }
+    .esquina.tl { top: 10px; left: 10px; border-top-width: 2px; border-left-width: 2px; }
+    .esquina.tr { top: 10px; right: 10px; border-top-width: 2px; border-right-width: 2px; }
+    .esquina.bl { bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+    .esquina.br { bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+    .cruz { position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; transform: translate(-50%,-50%); opacity: 0.5; }
+    .cruz::before, .cruz::after { content: ""; position: absolute; background: #1cc3b8; }
+    .cruz::before { left: 7px; top: 0; width: 1px; height: 14px; }
+    .cruz::after { top: 7px; left: 0; height: 1px; width: 14px; }
+    .visor-chip {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 2; display: inline-flex; align-items: center; gap: 0.5rem;
+      color: #1cc3b8; font-family: var(--font-mono); font-size: 0.64rem; font-weight: 600; letter-spacing: 0.14em;
+    }
+    .visor-chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #1cc3b8; box-shadow: 0 0 0 3px rgba(28,195,184,0.25); }
+    .visor-salida {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      display: flex; align-items: baseline; gap: 0.7rem; justify-content: center;
+      padding: 0.55rem 0.8rem; border-top: 1px solid #263230; background: rgba(8,16,15,0.8);
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; color: #8fa09d;
+    }
+    .visor-salida .letras { display: inline-flex; gap: 0.45rem; color: #1cc3b8; font-weight: 600; font-size: 0.95rem; }
+    .visor-salida .letras b { font-weight: 600; opacity: 0; }
+    .visor-salida .cursor { display: inline-block; width: 0.55em; height: 1em; background: #1cc3b8; transform: translateY(0.14em); }
+    .punto { position: absolute; border-radius: 50%; background: #1cc3b8; z-index: 1; }
+    .hilo { position: absolute; height: 1px; background: rgba(28,195,184,0.35); transform-origin: 0 0; z-index: 1; }
+    @media (prefers-reduced-motion: no-preference) {
+      .punto { animation: latido 2.6s ease-in-out infinite; }
+      .punto:nth-child(odd) { animation-delay: 1.1s; }
+      .visor-salida .letras b { animation: aparece 6s steps(1) infinite; }
+      .visor-salida .letras b:nth-child(1) { animation-delay: 0.4s; }
+      .visor-salida .letras b:nth-child(2) { animation-delay: 1.1s; }
+      .visor-salida .letras b:nth-child(3) { animation-delay: 1.8s; }
+      .visor-salida .letras b:nth-child(4) { animation-delay: 2.5s; }
+      .visor-salida .letras b:nth-child(5) { animation-delay: 3.2s; }
+      .visor-salida .letras b:nth-child(6) { animation-delay: 3.9s; }
+      .visor-salida .cursor { animation: parpadeo 1.1s steps(1) infinite; }
+      @keyframes latido { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+      @keyframes aparece { 0% { opacity: 0; } 10% { opacity: 1; } 92% { opacity: 1; } 100% { opacity: 0; } }
+      @keyframes parpadeo { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
+    }
+    @media (prefers-reduced-motion: reduce) { .visor-salida .letras b { opacity: 1; } }
 
-    .subtabs { display: flex; gap: 0.4rem; justify-content: center; }
-    .subtabs button { font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; border: 1px solid var(--border); background: transparent; color: var(--muted); padding: 0.4rem 1rem; border-radius: 999px; cursor: pointer; }
-    .subtabs button.activa { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    /* Filas de ficha: claves en mono, tarjetas de modo */
+    .ficha { padding: 0 1.4rem; }
+    .fila { display: grid; grid-template-columns: 10rem 1fr; gap: 1.4rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+    .clave { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding-top: 0.3rem; }
+    .valor { display: flex; flex-direction: column; gap: 1rem; }
+    .valor p { margin: 0; font-size: 0.94rem; color: var(--muted); text-wrap: pretty; max-width: 38rem; }
+    .valor b, .valor strong { color: var(--text); font-weight: 600; }
 
-    .tarjeta { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem; box-shadow: var(--shadow); }
-    .fila { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
-    label { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
-    .etiqueta { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--muted); font-weight: 600; }
-    select { font-family: var(--font-body); font-size: 1rem; font-weight: 500; color: var(--text); padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; }
-    #referencia, #ref-letra { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4/3; margin-top: 0.5rem; border: 1px solid var(--border); object-fit: cover; }
+    .dos-modos { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .modo { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.45rem; }
+    .modo .nombre { font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 0.55rem; }
+    .modo .nombre::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .modo p { margin: 0; font-size: 0.87rem; color: var(--muted); }
+    .modo .spec { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.55rem; margin-top: 0.35rem; }
 
-    button.accion { font-family: var(--font-body); font-size: 1.05rem; font-weight: 600; padding: 0.8rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; background: var(--accent); color: var(--accent-ink); transition: transform 0.1s, filter 0.15s; width: 100%; }
-    button.accion:hover:not(:disabled) { filter: brightness(1.06); }
-    button.accion:active:not(:disabled) { transform: scale(0.98); }
-    button.accion:disabled { opacity: 0.45; cursor: default; }
-    button.secundario { background: var(--surface-2); color: var(--text); }
-    .botones { display: flex; gap: 0.6rem; }
-    .botones .accion { flex: 1; }
+    .paso-linea { display: flex; gap: 0.9rem; align-items: baseline; }
+    .paso-linea .n { font-family: var(--font-mono); font-weight: 600; font-size: 0.78rem; color: var(--accent); flex: none; }
+    .paso-linea p { margin: 0; font-size: 0.94rem; color: var(--muted); }
 
-    #resultado-aprender, #resultado-letra { font-size: 1.5rem; font-weight: 700; min-height: 2rem; text-align: center; font-family: var(--font-display); }
+    .fila-final { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.6rem 1.4rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .fila-final .texto { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; }
 
-    .letra-viva { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 1rem; }
-    .letra-viva .letra { font-family: var(--font-display); font-weight: 700; font-size: 4rem; line-height: 1; color: var(--accent); }
-    .letra-viva .conf { font-size: 0.8rem; color: var(--muted); }
+    footer { padding: 1rem 1.4rem 1.2rem; }
+    footer p { margin: 0; font-family: var(--font-mono); color: var(--muted); font-size: 0.64rem; line-height: 1.7; letter-spacing: 0.03em; text-wrap: pretty; }
 
-    #mensaje, #mensaje-abc { min-height: 3.5rem; padding: 1rem; border-radius: 12px; background: var(--surface-2); font-size: 1.6rem; font-weight: 600; text-align: center; color: var(--text); font-family: var(--font-display); word-break: break-word; letter-spacing: 0.05em; }
-    #mensaje:empty::before, #mensaje-abc:empty::before { content: "Tu mensaje aparecerá aquí"; color: var(--muted); font-weight: 400; font-size: 1rem; font-family: var(--font-body); letter-spacing: normal; }
-
-    .aviso { text-align: center; color: var(--muted); font-size: 0.85rem; margin: 0; }
-    button:focus-visible, .modos button:focus-visible, .subtabs button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+    @media (max-width: 780px) {
+      .presentacion { grid-template-columns: 1fr; }
+      .lomo { display: none; }
+      .presentacion-texto { padding: 1.8rem 1.4rem; }
+      .visor-celda { border-left: none; border-top: 1px solid var(--border); aspect-ratio: 4/3; min-height: 0; }
+      .fila { grid-template-columns: 1fr; gap: 0.6rem; padding: 1.2rem 0; }
+      .dos-modos { grid-template-columns: 1fr; }
+      .hud .oculta-movil { display: none; }
+      .cta-encuadre { width: 100%; }
+      .cta { width: 100%; justify-content: center; }
+    }
   </style>
 </head>
 <body>
-  <div class="marco">
+  <div class="panel">
+    <span class="registro tl" aria-hidden="true"></span><span class="registro tr" aria-hidden="true"></span>
+    <span class="registro bl" aria-hidden="true"></span><span class="registro br" aria-hidden="true"></span>
+
     <header>
-      <h1 class="logo">Se<span>ñ</span>as</h1>
-      <p class="sub">Reconocedor de Lengua de Signos Española</p>
+      <p class="logo">Sign<span>ia</span><span>_</span></p>
+      <div class="cabecera-der">
+        <div class="hud">
+          <span class="oculta-movil">Reconocedor · LSE</span>
+          <span class="oculta-movil">0 datos enviados</span>
+          <span class="vivo">Local</span>
+        </div>
+        <button id="tema" type="button" aria-label="Cambiar tema claro u oscuro" title="Tema claro / oscuro">◐</button>
+      </div>
     </header>
 
-    <div class="modos" role="tablist">
-      <button id="tab-aprender" class="activa">Aprender</button>
-      <button id="tab-comunicar">Comunicar</button>
-    </div>
-
-    <div id="contenedor">
-      <video id="video" playsinline></video>
-      <canvas id="lienzo" width="640" height="480"></canvas>
-      <div id="estado">Cargando…</div>
-    </div>
-
-    <!-- MODO APRENDER -->
-    <div id="panel-aprender" class="panel">
-      <div class="subtabs">
-        <button id="sub-apr-signos" class="activa">Signos</button>
-        <button id="sub-apr-abc">Abecedario</button>
+    <div class="presentacion">
+      <div class="lomo" aria-hidden="true"><span>Ficha técnica — Signia v1</span></div>
+      <div class="presentacion-texto">
+        <h1>Signa frente a la cámara. <mark>El navegador lo escribe.</mark></h1>
+        <p class="entradilla">Reconocedor de Lengua de Signos Española para quienes la aprenden y para personas sordas que quieren comunicarse con quien no signa. <strong>Todo se procesa en tu dispositivo</strong>: la imagen no se envía a ningún servidor.</p>
+        <div class="cta-encuadre">
+          <i></i><i></i><i></i><i></i>
+          <a class="cta" href="app.html">Abrir la aplicación <span class="tecla">↵</span></a>
+        </div>
+        <span class="cta-nota">Sin registro · Sin instalación · La cámara se pide dentro</span>
       </div>
-
-      <div id="apr-signos" class="panel">
-        <div class="tarjeta">
-          <div class="fila">
-            <label for="selector">Signo a practicar</label>
-            <select id="selector"></select>
-          </div>
-          <div class="etiqueta" style="margin-top:0.9rem;">Cómo se hace</div>
-          <video id="referencia" playsinline muted loop autoplay></video>
+      <div class="visor-celda" role="img" aria-label="Vista del reconocedor: los puntos de una mano detectados y el texto que va deletreando">
+        <div class="esquina tl"></div><div class="esquina tr"></div>
+        <div class="esquina bl"></div><div class="esquina br"></div>
+        <span class="cruz" aria-hidden="true"></span>
+        <span class="visor-chip">RECONOCIENDO</span>
+        <div class="hilo" style="top:52%;left:36%;width:16%;transform:rotate(-32deg)"></div>
+        <div class="hilo" style="top:43%;left:49%;width:13%;transform:rotate(-18deg)"></div>
+        <div class="hilo" style="top:52%;left:36%;width:14%;transform:rotate(14deg)"></div>
+        <div class="hilo" style="top:39%;left:60%;width:11%;transform:rotate(38deg)"></div>
+        <div class="hilo" style="top:56%;left:47%;width:12%;transform:rotate(-64deg)"></div>
+        <div class="punto" style="top:51%;left:35%;width:9px;height:9px"></div>
+        <div class="punto" style="top:42%;left:48%;width:7px;height:7px"></div>
+        <div class="punto" style="top:38%;left:59%;width:7px;height:7px"></div>
+        <div class="punto" style="top:46%;left:69%;width:6px;height:6px"></div>
+        <div class="punto" style="top:55%;left:49%;width:6px;height:6px"></div>
+        <div class="punto" style="top:60%;left:42%;width:5px;height:5px"></div>
+        <div class="punto" style="top:32%;left:53%;width:5px;height:5px"></div>
+        <div class="punto" style="top:27%;left:45%;width:4px;height:4px"></div>
+        <div class="visor-salida" aria-hidden="true">
+          <span>&gt; salida</span>
+          <span class="letras"><b>S</b><b>I</b><b>G</b><b>N</b><b>I</b><b>A</b><span class="cursor"></span></span>
         </div>
-        <button id="grabar-aprender" class="accion" disabled>Grabar mi signo</button>
-        <div id="resultado-aprender"></div>
-        <p class="aviso">Elige un signo, míralo e imítalo frente a la cámara. Te diré si lo has hecho bien.</p>
-      </div>
-
-      <div id="apr-abc" class="panel oculto">
-        <div class="tarjeta">
-          <div class="fila">
-            <label for="selector-letra">Letra a practicar</label>
-            <select id="selector-letra"></select>
-          </div>
-          <div class="etiqueta" style="margin-top:0.9rem;">Cómo se hace</div>
-          <img id="ref-letra" alt="Forma de la letra" />
-        </div>
-        <div class="tarjeta letra-viva">
-          <div class="etiqueta">Tu mano dice</div>
-          <div class="letra" id="letra-viva-apr">–</div>
-        </div>
-        <div id="resultado-letra"></div>
-        <p class="aviso">Haz la letra con la mano frente a la cámara. Se reconoce al momento; mantenla hasta que salga "Correcto".</p>
       </div>
     </div>
 
-    <!-- MODO COMUNICAR -->
-    <div id="panel-comunicar" class="panel oculto">
-      <div class="subtabs">
-        <button id="sub-com-signos" class="activa">Signos</button>
-        <button id="sub-com-abc">Abecedario</button>
-      </div>
-
-      <div id="com-signos" class="panel">
-        <div class="tarjeta">
-          <div class="fila">
-            <label for="idioma">Mostrar significado en</label>
-            <select id="idioma">
-              <option value="es">Español</option>
-              <option value="en">English</option>
-            </select>
+    <div class="ficha">
+      <div class="fila">
+        <div class="clave">Modos</div>
+        <div class="valor">
+          <div class="dos-modos">
+            <div class="modo">
+              <span class="nombre">Aprender</span>
+              <p>Elige un signo o una letra, mira cómo se hace e imítalo frente a la cámara. Te corrige al momento.</p>
+              <span class="spec">Signos · Abecedario · Correcto / Casi / Repite</span>
+            </div>
+            <div class="modo">
+              <span class="nombre">Comunicar</span>
+              <p>Signa y la aplicación escribe lo que reconoce. También puedes deletrear letra a letra.</p>
+              <span class="spec">Texto en vivo · Español / English · Deletreo</span>
+            </div>
           </div>
         </div>
-        <div id="mensaje"></div>
-        <div class="botones">
-          <button id="grabar-comunicar" class="accion" disabled>Signar</button>
-          <button id="borrar" class="accion secundario">Borrar</button>
-        </div>
-        <p class="aviso">Signa en LSE. Cada signo reconocido se añade al texto, en el idioma elegido.</p>
       </div>
 
-      <div id="com-abc" class="panel oculto">
-        <div class="tarjeta letra-viva">
-          <div class="etiqueta">Tu mano dice</div>
-          <div class="letra" id="letra-viva-com">–</div>
+      <div class="fila">
+        <div class="clave">Uso</div>
+        <div class="valor">
+          <div class="paso-linea"><span class="n">01</span><p>Permite el acceso a la cámara al abrir la aplicación.</p></div>
+          <div class="paso-linea"><span class="n">02</span><p>Elige un modo: Aprender o Comunicar.</p></div>
+          <div class="paso-linea"><span class="n">03</span><p>Signa frente a la cámara. Tu mano se convierte en puntos; los puntos, en palabras.</p></div>
         </div>
-        <div id="mensaje-abc"></div>
-        <div class="botones">
-          <button id="anadir-letra" class="accion">Añadir letra</button>
-          <button id="espacio" class="accion secundario">Espacio</button>
-          <button id="borrar-abc" class="accion secundario">Borrar</button>
+      </div>
+
+      <div class="fila">
+        <div class="clave">Privacidad</div>
+        <div class="valor">
+          <p><b>Nada sale de tu dispositivo.</b> El reconocimiento ocurre dentro del navegador: no hay cuentas, no hay nube, no hay grabaciones. Al cerrar la pestaña no queda nada.</p>
         </div>
-        <p class="aviso">Deletrea con la mano: cuando la letra que quieres aparezca arriba, pulsa "Añadir letra" para escribirla.</p>
+      </div>
+
+      <div class="fila">
+        <div class="clave">Reconoce</div>
+        <div class="valor">
+          <p>Signos completos de un vocabulario concreto y las letras estáticas del alfabeto dactilológico.</p>
+        </div>
       </div>
     </div>
+
+    <div class="fila-final">
+      <span class="texto">¿Lista la cámara?</span>
+      <a class="cta" href="app.html">Empezar <span class="tecla">↵</span></a>
+    </div>
+
+    <footer>
+      <p>SIGNIA_ es un proyecto de fin de máster centrado en demostrar el reconocimiento de LSE en el navegador; no es un traductor completo de Lengua de Signos Española.</p>
+    </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>
-  <script type="module" src="app.js"></script>
-</body>
-</html>
+  <script>
+    (function () {
+      var raiz = document.documentElement;
+      var guardado = localStorage.getItem("signia-tema");
+      if (guardado === "light" || guardado === "dark") raiz.setAttribute("data-theme", guardado);
+      document.getElementById("tema").addEventListener("click", function () {
+        var actual = raiz.getAttribute("data-theme") ||
+          (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        var nuevo = actual === "light" ? "dark" : "light";
+        raiz.setAttribute("data-theme", nuevo);
+        localStorage.setItem("signia-tema", nuevo);
+      });
+    })();
+  </script>
+
+</body></html>
