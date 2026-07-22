@@ -1,258 +1,322 @@
 [
 {
 "es": "PIS",
-"en": "URINE"
+"en": "URINE",
+"fr": "URINE"
 },
 {
 "es": "AZUCAR",
-"en": "SUGAR"
+"en": "SUGAR",
+"fr": "SUCRE"
 },
 {
 "es": "AFECTAR",
-"en": "AFFECT"
+"en": "AFFECT",
+"fr": "AFFECTER"
 },
 {
 "es": "CACA",
-"en": "POOP"
+"en": "POOP",
+"fr": "CACA"
 },
 {
 "es": "MAREO",
-"en": "DIZZINESS"
+"en": "DIZZINESS",
+"fr": "VERTIGE"
 },
 {
 "es": "CURAR",
-"en": "CURE"
+"en": "CURE",
+"fr": "GUÉRIR"
 },
 {
 "es": "OPERAR",
-"en": "OPERATE"
+"en": "OPERATE",
+"fr": "OPÉRER"
 },
 {
 "es": "DOLOR",
-"en": "PAIN"
+"en": "PAIN",
+"fr": "DOULEUR"
 },
 {
 "es": "COMER",
-"en": "EAT"
+"en": "EAT",
+"fr": "MANGER"
 },
 {
 "es": "ESTRES",
-"en": "STRESS"
+"en": "STRESS",
+"fr": "STRESS"
 },
 {
 "es": "CANSADO",
-"en": "TIRED"
+"en": "TIRED",
+"fr": "FATIGUÉ"
 },
 {
 "es": "ANSIEDAD",
-"en": "ANXIETY"
+"en": "ANXIETY",
+"fr": "ANXIÉTÉ"
 },
 {
 "es": "EMBARAZO",
-"en": "PREGNANCY"
+"en": "PREGNANCY",
+"fr": "GROSSESSE"
 },
 {
 "es": "DIABETES",
-"en": "DIABETES"
+"en": "DIABETES",
+"fr": "DIABÈTE"
 },
 {
 "es": "DORMIR",
-"en": "SLEEP"
+"en": "SLEEP",
+"fr": "DORMIR"
 },
 {
 "es": "ENFERMO",
-"en": "SICK"
+"en": "SICK",
+"fr": "MALADE"
 },
 {
 "es": "DEBIL",
-"en": "WEAK"
+"en": "WEAK",
+"fr": "FAIBLE"
 },
 {
 "es": "PROBAR",
-"en": "TRY"
+"en": "TRY",
+"fr": "ESSAYER"
 },
 {
 "es": "CANCER",
-"en": "CANCER"
+"en": "CANCER",
+"fr": "CANCER"
 },
 {
 "es": "DROGA",
-"en": "DRUG"
+"en": "DRUG",
+"fr": "DROGUE"
 },
 {
 "es": "VER^PROBAR",
-"en": "TEST"
+"en": "TEST",
+"fr": "TEST"
 },
 {
 "es": "ANALISIS-DE-SANGRE",
-"en": "BLOOD TEST"
+"en": "BLOOD TEST",
+"fr": "ANALYSE DE SANG"
 },
 {
 "es": "AGOTAMIENTO",
-"en": "EXHAUSTION"
+"en": "EXHAUSTION",
+"fr": "ÉPUISEMENT"
 },
 {
 "es": "PIEL^CUERPO",
-"en": "SKIN"
+"en": "SKIN",
+"fr": "PEAU"
 },
 {
 "es": "DEPRESION",
-"en": "DEPRESSION"
+"en": "DEPRESSION",
+"fr": "DÉPRESSION"
 },
 {
 "es": "CUIDAR",
-"en": "CARE"
+"en": "CARE",
+"fr": "SOIGNER"
 },
 {
 "es": "ACONSEJAR",
-"en": "ADVISE"
+"en": "ADVISE",
+"fr": "CONSEILLER"
 },
 {
 "es": "HOSPITAL",
-"en": "HOSPITAL"
+"en": "HOSPITAL",
+"fr": "HÔPITAL"
 },
 {
 "es": "HAMBRE",
-"en": "HUNGER"
+"en": "HUNGER",
+"fr": "FAIM"
 },
 {
 "es": "NACER",
-"en": "BIRTH"
+"en": "BIRTH",
+"fr": "NAISSANCE"
 },
 {
 "es": "OIR^MITAD",
-"en": "HARD OF HEARING"
+"en": "HARD OF HEARING",
+"fr": "MALENTENDANT"
 },
 {
 "es": "ALCOHOL",
-"en": "ALCOHOL"
+"en": "ALCOHOL",
+"fr": "ALCOOL"
 },
 {
 "es": "GARGANTA",
-"en": "THROAT"
+"en": "THROAT",
+"fr": "GORGE"
 },
 {
 "es": "GANA",
-"en": "URGE"
+"en": "URGE",
+"fr": "ENVIE"
 },
 {
 "es": "FARMACIA",
-"en": "PHARMACY"
+"en": "PHARMACY",
+"fr": "PHARMACIE"
 },
 {
 "es": "CENTRO^VIVIR",
-"en": "CARE HOME"
+"en": "CARE HOME",
+"fr": "MAISON DE RETRAITE"
 },
 {
 "es": "ARTERIA",
-"en": "ARTERY"
+"en": "ARTERY",
+"fr": "ARTÈRE"
 },
 {
 "es": "GORDO",
-"en": "FAT"
+"en": "FAT",
+"fr": "GROS"
 },
 {
 "es": "SUFRIR",
-"en": "SUFFER"
+"en": "SUFFER",
+"fr": "SOUFFRIR"
 },
 {
 "es": "HERIDA",
-"en": "WOUND"
+"en": "WOUND",
+"fr": "BLESSURE"
 },
 {
 "es": "FIEBRE",
-"en": "FEVER"
+"en": "FEVER",
+"fr": "FIÈVRE"
 },
 {
 "es": "VIRUS",
-"en": "VIRUS"
+"en": "VIRUS",
+"fr": "VIRUS"
 },
 {
 "es": "GRIPE",
-"en": "FLU"
+"en": "FLU",
+"fr": "GRIPPE"
 },
 {
 "es": "ALERGIA",
-"en": "ALLERGY"
+"en": "ALLERGY",
+"fr": "ALLERGIE"
 },
 {
 "es": "EVITAR",
-"en": "AVOID"
+"en": "AVOID",
+"fr": "ÉVITER"
 },
 {
 "es": "MENTE^CEREBRO",
-"en": "BRAIN"
+"en": "BRAIN",
+"fr": "CERVEAU"
 },
 {
 "es": "ENFERMO^CASA",
-"en": "SICK AT HOME"
+"en": "SICK AT HOME",
+"fr": "MALADE À LA MAISON"
 },
 {
 "es": "CORAZON",
-"en": "HEART"
+"en": "HEART",
+"fr": "CŒUR"
 },
 {
 "es": "APENDICE",
-"en": "APPENDIX"
+"en": "APPENDIX",
+"fr": "APPENDICE"
 },
 {
 "es": "DOLOR-DE-CABEZA",
-"en": "HEADACHE"
+"en": "HEADACHE",
+"fr": "MAL DE TÊTE"
 },
 {
 "es": "AUXILIAR",
-"en": "AIDE"
+"en": "AIDE",
+"fr": "AIDE-SOIGNANT"
 },
 {
 "es": "ALTA",
-"en": "DISCHARGE"
+"en": "DISCHARGE",
+"fr": "SORTIE"
 },
 {
 "es": "FUMAR",
-"en": "SMOKE"
+"en": "SMOKE",
+"fr": "FUMER"
 },
 {
 "es": "RELAJAR",
-"en": "RELAX"
+"en": "RELAX",
+"fr": "SE DÉTENDRE"
 },
 {
 "es": "URGENTE",
-"en": "URGENT"
+"en": "URGENT",
+"fr": "URGENT"
 },
 {
 "es": "INSOMNIO",
-"en": "INSOMNIA"
+"en": "INSOMNIA",
+"fr": "INSOMNIE"
 },
 {
 "es": "CONTRA",
-"en": "AGAINST"
+"en": "AGAINST",
+"fr": "CONTRE"
 },
 {
 "es": "DIARREA",
-"en": "DIARRHEA"
+"en": "DIARRHEA",
+"fr": "DIARRHÉE"
 },
 {
 "es": "ADELGAZAR",
-"en": "LOSE WEIGHT"
+"en": "LOSE WEIGHT",
+"fr": "MAIGRIR"
 },
 {
 "es": "PULMON",
-"en": "LUNG"
+"en": "LUNG",
+"fr": "POUMON"
 },
 {
 "es": "CITA",
-"en": "APPOINTMENT"
+"en": "APPOINTMENT",
+"fr": "RENDEZ-VOUS"
 },
 {
 "es": "COMER^SIN",
-"en": "FASTING"
+"en": "FASTING",
+"fr": "À JEUN"
 },
 {
 "es": "CONTROL",
-"en": "CHECKUP"
+"en": "CHECKUP",
+"fr": "CONTRÔLE"
 },
 {
 "es": "APETECER",
-"en": "CRAVE"
+"en": "CRAVE",
+"fr": "AVOIR ENVIE"
 }
 ]

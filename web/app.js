@@ -186,7 +186,7 @@ const renderMensaje = () => { mensaje.textContent = fraseComunicar.map(nombreSig
 async function signarComunicar() {
   const p = await grabarSigno();
   if (p && p.confianza >= UMBRAL) { fraseComunicar.push(p.indice); renderMensaje(); }
-  else estado.textContent = idioma === "es" ? "No lo tengo claro, repite." : "Not sure, try again.";
+  else estado.textContent = { es: "No lo tengo claro, repite.", en: "Not sure, try again.", fr: "Pas sûr, réessaie." }[idioma];
 }
 
 // --- Comunicar: abecedario ---
