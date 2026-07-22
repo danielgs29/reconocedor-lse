@@ -1,0 +1,58 @@
+name: Desplegar en GitHub Pages
+
+# Se ejecuta en cada cambio subido a la rama principal, y tambien a mano si hace falta.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Permisos que necesita el despliegue en Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si llegan varios cambios seguidos, se queda con el ultimo despliegue.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # Integracion continua: comprobaciones antes de publicar.
+  comprobar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Comprobar que el JavaScript no tiene errores de sintaxis
+        run: |
+          node --check web/app.js
+          node --check web/modelo.js
+          node --check web/preprocesado.js
+      - name: Comprobar que estan los archivos que la app necesita
+        run: |
+          for f in web/index.html web/app.html web/modelo.tflite \
+                   web/abecedario.tflite web/vocabulario.json web/abecedario.json; do
+            test -f "$f" || { echo "Falta el archivo: $f"; exit 1; }
+          done
+          test "$(ls web/referencias/*.mp4 | wc -l)" -gt 0 || { echo "Faltan los videos de referencia"; exit 1; }
+
+  # Despliegue continuo: publica la carpeta web/ en GitHub Pages.
+  desplegar:
+    needs: comprobar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Preparar la carpeta web como contenido del sitio
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - name: Publicar en GitHub Pages
+        id: despliegue
+        uses: actions/deploy-pages@v4
